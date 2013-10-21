@@ -19,6 +19,14 @@ FileHandler::FileHandler()
     //current_open_file_info = 0;
 }
 
+QFile* FileHandler::CurrentFile()
+{
+    //Debugging check
+    if (current_open_file == nullptr)
+        cout << "No current open file\n";
+    return current_open_file;
+}
+
 bool FileHandler::OpenFile(QString file_name)
 {
     //Check for existence of file
@@ -45,6 +53,9 @@ bool FileHandler::OpenFile(QString file_name)
 
     //Set the current_open_file to the newly opened file
     current_open_file = &file;
+
+    cout << "Current open file: " << current_open_file->fileName().toStdString() << "\n";
+
     //Retrieve the file's information
     current_open_file_info = QFileInfo::QFileInfo(file_name);
     return true;
@@ -70,6 +81,7 @@ bool FileHandler::CreateFile(QString file_name, QString file_type)
     QFile file(file_name);
     //TODO: Create a GenericFile of appropriate file_type
     //Right now only makes text files
+    //NOTE: Calling QFile's open method creates the file
     if (!file.open(QFile::WriteOnly | QFile::Text))
     {
         cout << "Could not create file " << file_name.toStdString() << "\n";
@@ -88,11 +100,12 @@ bool FileHandler::RemoveFile(QString file_name)
         return false;
     }
     //Check that it is not the file currently open
-    if (file_name == current_open_file->fileName())
-    {
-        cout << "File " << file_name.toStdString() << " is currently open";
-        return false;
-    }
+    if (current_open_file != nullptr)
+        if (file_name == current_open_file->fileName())
+        {
+            cout << "File " << file_name.toStdString() << " is currently open";
+            return false;
+        }
 
     QFile::remove(file_name);
     return true;
