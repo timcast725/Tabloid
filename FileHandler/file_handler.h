@@ -21,15 +21,18 @@ public:
     bool OpenFile(QString file_name);
     //Closes the current_open_file
     bool CloseFile();
-    //Creates a new file with the given file name and type
+    //Creates a new file object with the given file name and type
+    //NOTE: The new file is in-memory only until it is saved
     bool CreateFile(QString file_name, QString file_type);
     //Deletes the specified file from the current directory
     bool RemoveFile(QString file_name);
+    //Saves the current_open_file
+    bool SaveFile();
     //Changes the current_directory to the given directory_path
     bool ChangeDirectory(QString directory_path);
 
     //Accessor for the current_open_file
-    QFile* CurrentFile(){return current_open_file;}
+    QFile* CurrentFile();
     //Accessor for the current_directory
     QDir CurrentDirectory(){return current_directory;}
 private:

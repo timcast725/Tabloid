@@ -19,4 +19,5 @@ SOURCES += main.cpp \
     file_handler.cpp
 
 HEADERS += \
-    file_handler.h
+    file_handler.h \
+    generic_file.h
