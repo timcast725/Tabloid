@@ -15,7 +15,7 @@ FileHandler::FileHandler()
 {
     current_directory = QDir::currentPath();
     home_directory = "";
-    current_open_file = nullptr;
+    current_open_file = NULL;
     //current_open_file_info = 0;
 }
 
@@ -46,7 +46,7 @@ bool FileHandler::OpenFile(QString file_name)
     }
 
     //If there is a file currently open, close it first
-    if (current_open_file != nullptr)
+    if (current_open_file != NULL)
     {
         CloseFile();
     }
@@ -57,14 +57,14 @@ bool FileHandler::OpenFile(QString file_name)
     cout << "Current open file: " << current_open_file->fileName().toStdString() << "\n";
 
     //Retrieve the file's information
-    current_open_file_info = QFileInfo::QFileInfo(file_name);
+    current_open_file_info = QFileInfo(file_name);
     return true;
 }
 
 bool FileHandler::CloseFile()
 {
     //Check that there is a file currently open
-    if (current_open_file == nullptr)
+    if (current_open_file == NULL)
     {
         cout << "No file to close\n";
         return false;
