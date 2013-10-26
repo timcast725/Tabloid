@@ -1,6 +1,8 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
+#include <wavfile.h>
+
 #include <QAudioDeviceInfo>
 #include <QAudioFormat>
 #include <QBuffer>
@@ -16,5 +18,7 @@
  * of audio data, meanwhile performing real-time analysis of the audio level
  * and audio analyzer.
  */
+
+
 
 #endif // ENGINE_H
