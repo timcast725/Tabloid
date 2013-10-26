@@ -8,13 +8,15 @@ win32:INCLUDEPATH += $$PWD
 HEADERS = \
     mainwidget.h \
     engine.h \
-    wavfile.h
+    wavfile.h \
+    utils.h
 
 SOURCES = \
     main.cpp \
     engine.cpp \
     mainwidget.cpp \
-    wavfile.cpp
+    wavfile.cpp \
+    utils.cpp
 
 maemo*: {
     FORMS += audiorecorder_small.ui
