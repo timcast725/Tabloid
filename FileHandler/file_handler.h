@@ -10,7 +10,6 @@
 #include <QString>
 #include <QFileInfo>
 
-
 class FileHandler
 {
 
@@ -32,6 +31,7 @@ public:
     bool ChangeDirectory(QString directory_path);
 
     //Accessor for the current_open_file
+    //NOTE: Going to keep this as a QFile and have other file classes inherit from QFile
     QFile* CurrentFile();
     //Accessor for the current_directory
     QDir CurrentDirectory(){return current_directory;}

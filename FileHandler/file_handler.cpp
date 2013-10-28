@@ -1,5 +1,6 @@
 
 #include "file_handler.h"
+#include "wavfile.h"
 
 #include <iostream>
 
@@ -7,6 +8,7 @@
 #include <QDir>
 #include <QString>
 #include <QTextStream>
+#include <QtMultimedia/QAudioOutput>
 
 using namespace std;
 
@@ -15,7 +17,7 @@ FileHandler::FileHandler()
 {
     current_directory = QDir::currentPath();
     home_directory = "";
-    current_open_file = NULL;
+    current_open_file = nullptr;
     //current_open_file_info = 0;
 }
 
@@ -35,60 +37,75 @@ bool FileHandler::OpenFile(QString file_name)
         cout << "File " << file_name.toStdString() << " does not exist";
         return false;
     }
-
-    QFile file(file_name);  //(TODO: Create a GenericFile instead)
-    //Attempt to open file
-    //TODO: Call the GenericFile's open method instead
-    if (!file.open(QFile::ReadWrite))   //appropriate open flags here
-    {
-        cout << "File " << file_name.toStdString() << " could not be opened";
-        return false;
-    }
+    //Get the file's type
+    QString f_type = QFileInfo(file_name).suffix();
+    cout << "File type: " << f_type.toStdString() << "\n";
 
     //If there is a file currently open, close it first
-    if (current_open_file != NULL)
+    if (current_open_file != nullptr)
     {
         CloseFile();
     }
 
-    //Set the current_open_file to the newly opened file
-    current_open_file = &file;
-
-    cout << "Current open file: " << current_open_file->fileName().toStdString() << "\n";
-
+    QString qstring_wav = "wav";
+    //Attempt to open file
+    cout << "f_type.compare result: " << f_type.compare("wav") << "\n";
+    //QString::compare returns 0 if the strings are equal
+    if (!f_type.compare("wav"))
+    {
+        cout << "Recognize f_type as wav\n";
+        current_open_file = new WavFile();
+        if (!((dynamic_cast<WavFile*>(current_open_file))->open(file_name)))   //appropriate open flags here
+        {
+            cout << "File " << file_name.toStdString() << " could not be opened";
+            return false;
+        }
+    }
     //Retrieve the file's information
-    current_open_file_info = QFileInfo(file_name);
+    current_open_file_info = QFileInfo::QFileInfo(file_name);
     return true;
 }
 
 bool FileHandler::CloseFile()
 {
     //Check that there is a file currently open
-    if (current_open_file == NULL)
+    if (current_open_file == nullptr)
     {
         cout << "No file to close\n";
         return false;
     }
 
-    //TODO: Call the current_open_file's own close method instead
+    //Close the file
     current_open_file->close();
-    return true;
+    //Make sure it is no longer open before nulling current_open_file
+    bool success = !current_open_file->isOpen();
+    if (success)
+    {
+        cout << "File successfully closed\n";
+        current_open_file = nullptr;
+    }
 
+    return success;
 }
 
 bool FileHandler::CreateFile(QString file_name, QString file_type)
 {
+    //Do not try to create the file if it already exists
+    if (QFile::exists(file_name))
+    {
+        cout << "Could not create file, file already exists\n";
+        return false;
+    }
     QFile file(file_name);
-    //TODO: Create a GenericFile of appropriate file_type
-    //Right now only makes text files
-    //NOTE: Calling QFile's open method creates the file
-    if (!file.open(QFile::WriteOnly | QFile::Text))
+    //Call open function on the QFile to create the file
+    file.open(QFile::ReadWrite);
+    if (!QFile::exists(file_name))
     {
         cout << "Could not create file " << file_name.toStdString() << "\n";
         return false;
     }
 
-    return OpenFile(file_name);
+    return true;
 }
 
 bool FileHandler::RemoveFile(QString file_name)
