@@ -33,8 +33,11 @@ public:
 
     //Calling read without specifying a length will read the entire file
     int Read(char *buffer);
-    //Read at most a specified number of bytes from a file into the specified buffer
+    //Read at most a specified number of bytes from the open file into the specified buffer
     int Read(char *buffer, int length);
+
+    //Write at most a specified number of bytes from the specified buffer into the open file
+    int Write(char *buffer, int length);
 
     //Accessor for the current_open_file
     //NOTE: Going to keep this as a QFile and have other file classes inherit from QFile

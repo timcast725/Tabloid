@@ -97,6 +97,27 @@ void test_read(FileHandler * test_handler)
     cout << "Bytes read: " << bytes_read << "\n";
 }
 
+void test_write(FileHandler * test_handler)
+{
+    cout << "To test writing, we will copy raw data from one file to the current open file.\n";
+    cout << "Input file to copy from: ";
+
+    QString current_file = test_handler->CurrentFile()->fileName();
+    string next_file;
+    cin >> next_file;
+    QString q_next_file = QString::fromStdString(next_file);
+
+    //Read from the file we want to copy from
+    test_handler->OpenFile(q_next_file);
+    char * buffer = new char[999999];
+    int bytes_read = test_handler->Read(buffer);
+
+    //Write to the file we started from
+    test_handler->OpenFile(current_file);
+    int bytes_written = test_handler->Write(buffer, bytes_read);
+    cout << "Bytes written: " << bytes_written << "\n";
+}
+
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
@@ -124,6 +145,7 @@ int main(int argc, char *argv[])
         cout << "(d) Open File\n";
         cout << "(e) Close File\n";
         cout << "(f) Read from file\n";
+        cout << "(g) Write to file\n";
         cout << "(q) Quit\n";
 
         string choice;
@@ -140,6 +162,8 @@ int main(int argc, char *argv[])
             test_file_close(&test_handler);
         else if (choice == "f")
             test_read(&test_handler);
+        else if (choice == "g")
+            test_write(&test_handler);
         else if (choice == "q")
             return a.exec();
     }

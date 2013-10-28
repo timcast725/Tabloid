@@ -153,7 +153,7 @@ int FileHandler::Read(char * buffer, int length)
     //Check that we are reading a positive length
     if (length <  0)
     {
-        cout << "Cannot read negative length of bytes\n";
+        cout << "Cannot read negative number of bytes\n";
         return 0;
     }
     //Check that there is an open file to read from
@@ -174,4 +174,32 @@ int FileHandler::Read(char * buffer, int length)
          << dynamic_cast<QFile*>(data_stream.device())->fileName().toStdString() << "\n";
     int bytes_read = data_stream.readRawData(buffer, length);
     return bytes_read;
+}
+
+int FileHandler::Write(char *buffer, int length)
+{
+    //Check that we are writing a positive length
+    if (length <  0)
+    {
+        cout << "Cannot write negative number of bytes\n";
+        return 0;
+    }
+    //Check that there is an open file to write to
+    if (current_open_file == nullptr)
+    {
+        cout << "No open file to write to\n";
+        return 0;
+    }
+    //Check that we can write to the currently open file
+    if (!current_open_file_info.isWritable())
+    {
+        cout << "Current file is not writable\n";
+        return 0;
+    }
+
+    QDataStream data_stream(current_open_file);
+    cout << "Writing up to " << length << " bytes to "
+         << dynamic_cast<QFile*>(data_stream.device())->fileName().toStdString() << "\n";
+    int bytes_written = data_stream.writeRawData(buffer, length);
+    return bytes_written;
 }
