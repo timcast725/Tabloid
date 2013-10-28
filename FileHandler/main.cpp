@@ -82,6 +82,21 @@ void test_file_close(FileHandler * test_handler)
         cout << "File successfully closed, no file is currently open\n";
 }
 
+void test_read(FileHandler * test_handler)
+{
+    cout << "Enter number of bytes to read, or enter -1 to read whole file: ";
+    string input;
+    cin >> input;
+    int length = stoi(input);
+    int bytes_read = 0;
+    char * buffer = new char[999999];
+    if (length == -1)
+        bytes_read = test_handler->Read(buffer);
+    else
+        bytes_read = test_handler->Read(buffer, length);
+    cout << "Bytes read: " << bytes_read << "\n";
+}
+
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
@@ -108,6 +123,7 @@ int main(int argc, char *argv[])
         cout << "(c) Remove File\n";
         cout << "(d) Open File\n";
         cout << "(e) Close File\n";
+        cout << "(f) Read from file\n";
         cout << "(q) Quit\n";
 
         string choice;
@@ -122,6 +138,8 @@ int main(int argc, char *argv[])
             test_file_open(&test_handler);
         else if (choice == "e")
             test_file_close(&test_handler);
+        else if (choice == "f")
+            test_read(&test_handler);
         else if (choice == "q")
             return a.exec();
     }

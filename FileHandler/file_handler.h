@@ -9,6 +9,7 @@
 #include <QDir>
 #include <QString>
 #include <QFileInfo>
+#include <QDataStream>
 
 class FileHandler
 {
@@ -29,6 +30,11 @@ public:
     bool SaveFile();
     //Changes the current_directory to the given directory_path
     bool ChangeDirectory(QString directory_path);
+
+    //Calling read without specifying a length will read the entire file
+    int Read(char *buffer);
+    //Read at most a specified number of bytes from a file into the specified buffer
+    int Read(char *buffer, int length);
 
     //Accessor for the current_open_file
     //NOTE: Going to keep this as a QFile and have other file classes inherit from QFile

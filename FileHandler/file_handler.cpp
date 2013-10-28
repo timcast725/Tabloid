@@ -130,7 +130,7 @@ bool FileHandler::RemoveFile(QString file_name)
 
 bool FileHandler::ChangeDirectory(QString directory_path)
 {
-    if(!current_directory.cd(directory_path))
+    if (!current_directory.cd(directory_path))
     {
         cout << "Changing to directory " << directory_path.toStdString() << " failed\n";
         return false;
@@ -142,3 +142,36 @@ bool FileHandler::ChangeDirectory(QString directory_path)
     }
 }
 
+//Zev: NOTE: Could change to call the object's read function, generically
+//reading raw byte data for now
+int FileHandler::Read(char * buffer)
+{
+    return Read(buffer, current_open_file_info.size());
+}
+int FileHandler::Read(char * buffer, int length)
+{
+    //Check that we are reading a positive length
+    if (length <  0)
+    {
+        cout << "Cannot read negative length of bytes\n";
+        return 0;
+    }
+    //Check that there is an open file to read from
+    if (current_open_file == nullptr)
+    {
+        cout << "No open file to read from\n";
+        return 0;
+    }
+    //Check that we can read from the currently open file
+    if (!current_open_file_info.isReadable())
+    {
+        cout << "Current file is not readable\n";
+        return 0;
+    }
+
+    QDataStream data_stream(current_open_file);
+    cout << "Reading up to " << length << " bytes from "
+         << dynamic_cast<QFile*>(data_stream.device())->fileName().toStdString() << "\n";
+    int bytes_read = data_stream.readRawData(buffer, length);
+    return bytes_read;
+}
