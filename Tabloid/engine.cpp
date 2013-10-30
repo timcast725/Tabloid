@@ -46,14 +46,47 @@ Engine::Engine(QObject *parent)
     createOutputDir();
 #endif
 
-#ifdef DUMP_SPECTRUM
-    m_spectrumAnalyser.setOutputPath(outputPath());
-#endif
 }
 
 Engine::~Engine()
 {
 
+}
+
+bool Engine::loadFile(const QString &fileName)
+{
+    reset();
+    bool result = false;
+    Q_ASSERT(!m_generateTone);
+    Q_ASSERT(!m_file);
+    Q_ASSERT(!fileName.isEmpty());
+    m_file = new WavFile(this);
+    if (m_file->open(fileName)) {
+        if (isPCMS16LE(m_file->fileFormat())) {
+            result = initialize();
+        } else {
+            emit errorMessage(tr("Audio format not supported"),
+                              formatToString(m_file->fileFormat()));
+        }
+    } else {
+        emit errorMessage(tr("Could not open file"), fileName);
+    }
+    if (result) {
+        m_analysisFile = new WavFile(this);
+        m_analysisFile->open(fileName);
+    }
+    return result;
+}
+
+bool Engine::initializeRecord()
+{
+    reset();
+    ENGINE_DEBUG << "Engine::initializeRecord";
+    Q_ASSERT(!m_generateTone);
+    Q_ASSERT(!m_file);
+    m_generateTone = false;
+    m_tone = SweptTone();
+    return initialize();
 }
 
 
