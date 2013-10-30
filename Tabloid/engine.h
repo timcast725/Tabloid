@@ -11,7 +11,8 @@
 #include <QObject>
 #include <QVector>
 
-/*#include <parser.h>
+/**
+ *#include <parser.h>
  *#include <sheetMusic.h>
  *etc...
  */
@@ -184,15 +185,12 @@ private:
     void setRecordPosition(qint64 position, bool forceEmit = false);
     void setPlayPosition(qint64 position, bool forceEmit = false);
     void calculateLevel(qint64 position, qint64 length);
-    void calculateSpectrum(qint64 position);
+    void parse(qint64 position);
     void setLevel(qreal rmsLevel, qreal peakLevel, int numSamples);
 
 private:
     QAudio::Mode        m_mode;
     QAudio::State       m_state;
-
-    bool                m_generateTone;
-    SweptTone           m_tone;
 
     WavFile*            m_file;
     // We need a second file handle via which to read data into m_buffer
@@ -224,7 +222,7 @@ private:
 
     int                 m_spectrumBufferLength;
     QByteArray          m_spectrumBuffer;
-    SpectrumAnalyser    m_spectrumAnalyser;
+    Parser              m_parser;
     qint64              m_spectrumPosition;
 
     int                 m_count;
