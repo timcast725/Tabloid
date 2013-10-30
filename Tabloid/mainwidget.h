@@ -36,8 +36,6 @@ public:
 public slots:
     void stateChanged(QAudio::Mode mode, QAudio::State state);
     void formatChanged(const QAudioFormat &format);
-    void spectrumChanged(qint64 position, qint64 length,
-                         const FrequencySpectrum &spectrum);
     void infoMessage(const QString &message, int timeoutMs);
     void errorMessage(const QString &heading, const QString &detail);
     void audioPositionChanged(qint64 position);
@@ -46,7 +44,6 @@ public slots:
 private slots:
     void showFileDialog();
     void showSettingsDialog();
-    void showToneGeneratorDialog();
     void initializeRecord();
     void updateModeMenu();
     void updateButtonStates();

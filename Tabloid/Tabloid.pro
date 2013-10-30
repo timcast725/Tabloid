@@ -10,7 +10,8 @@ HEADERS = \
     engine.h \
     wavfile.h \
     utils.h \
-    progressbar.h
+    progressbar.h \
+    levelmeter.h
 
 SOURCES = \
     main.cpp \
@@ -18,7 +19,8 @@ SOURCES = \
     mainwidget.cpp \
     wavfile.cpp \
     utils.cpp \
-    progressbar.cpp
+    progressbar.cpp \
+    levelmeter.cpp
 
 maemo*: {
     FORMS += audiorecorder_small.ui
