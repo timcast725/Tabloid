@@ -9,14 +9,16 @@ HEADERS = \
     mainwidget.h \
     engine.h \
     wavfile.h \
-    utils.h
+    utils.h \
+    progressbar.h
 
 SOURCES = \
     main.cpp \
     engine.cpp \
     mainwidget.cpp \
     wavfile.cpp \
-    utils.cpp
+    utils.cpp \
+    progressbar.cpp
 
 maemo*: {
     FORMS += audiorecorder_small.ui

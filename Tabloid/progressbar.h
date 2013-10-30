@@ -1,0 +1,4 @@
+#ifndef PROGRESSBAR_H
+#define PROGRESSBAR_H
+
+#endif // PROGRESSBAR_H
