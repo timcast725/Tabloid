@@ -281,8 +281,8 @@ void MainWidget::createMenus()
 {
     m_modeButton->setMenu(m_modeMenu);
 
-    m_recordAction = m_modeMenu->addAction(tr("Record and play back"));
-    m_loadFileAction = m_modeMenu->addAction(tr("Play file"));
+    m_recordAction = m_modeMenu->addAction(tr("Record and parse"));
+    m_loadFileAction = m_modeMenu->addAction(tr("Play and parse file"));
 
     m_loadFileAction->setCheckable(true);
     m_recordAction->setCheckable(true);
