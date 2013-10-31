@@ -1,72 +1,99 @@
-#ifndef UTILS_H
-#define UTILS_H
+#include <QAudioFormat>
+#include "utils.h"
 
-#include <QtCore/qglobal.h>
-#include <QDebug>
-
-QT_FORWARD_DECLARE_CLASS(QAudioFormat)
-
-//-----------------------------------------------------------------------------
-// Miscellaneous utility functions
-//-----------------------------------------------------------------------------
-
-qint64 audioDuration(const QAudioFormat &format, qint64 bytes);
-qint64 audioLength(const QAudioFormat &format, qint64 microSeconds);
-
-QString formatToString(const QAudioFormat &format);
-
-qreal nyquistFrequency(const QAudioFormat &format);
-
-// Scale PCM value to [-1.0, 1.0]
-qreal pcmToReal(qint16 pcm);
-
-// Scale real value in [-1.0, 1.0] to PCM
-qint16 realToPcm(qreal real);
-
-// Check whether the audio format is PCM
-bool isPCM(const QAudioFormat &format);
-
-// Check whether the audio format is signed, little-endian, 16-bit PCM
-bool isPCMS16LE(const QAudioFormat &format);
-
-// Compile-time calculation of powers of two
-
-template<int N> class PowerOfTwo
-{ public: static const int Result = PowerOfTwo<N-1>::Result * 2; };
-
-template<> class PowerOfTwo<0>
-{ public: static const int Result = 1; };
-
-
-//-----------------------------------------------------------------------------
-// Debug output
-//-----------------------------------------------------------------------------
-
-class NullDebug
+qint64 audioDuration(const QAudioFormat &format, qint64 bytes)
 {
-public:
-    template <typename T>
-    NullDebug& operator<<(const T&) { return *this; }
-};
+    return (bytes * 1000000) /
+        (format.sampleRate() * format.channelCount() * (format.sampleSize() / 8));
+}
 
-inline NullDebug nullDebug() { return NullDebug(); }
+qint64 audioLength(const QAudioFormat &format, qint64 microSeconds)
+{
+   qint64 result = (format.sampleRate() * format.channelCount() * (format.sampleSize() / 8))
+       * microSeconds / 1000000;
+   result -= result % (format.channelCount() * format.sampleSize());
+   return result;
+}
 
-#ifdef LOG_ENGINE
-#   define ENGINE_DEBUG qDebug()
-#else
-#   define ENGINE_DEBUG nullDebug()
-#endif
+qreal nyquistFrequency(const QAudioFormat &format)
+{
+    return format.sampleRate() / 2;
+}
 
-#ifdef LOG_SPECTRUMANALYSER
-#   define SPECTRUMANALYSER_DEBUG qDebug()
-#else
-#   define SPECTRUMANALYSER_DEBUG nullDebug()
-#endif
+QString formatToString(const QAudioFormat &format)
+{
+    QString result;
 
-#ifdef LOG_WAVEFORM
-#   define WAVEFORM_DEBUG qDebug()
-#else
-#   define WAVEFORM_DEBUG nullDebug()
-#endif
+    if (QAudioFormat() != format) {
+        if (format.codec() == "audio/pcm") {
+            Q_ASSERT(format.sampleType() == QAudioFormat::SignedInt);
 
-#endif // UTILS_H
+            const QString formatEndian = (format.byteOrder() == QAudioFormat::LittleEndian)
+                ?   QString("LE") : QString("BE");
+
+            QString formatType;
+            switch (format.sampleType()) {
+            case QAudioFormat::SignedInt:
+                formatType = "signed";
+                break;
+            case QAudioFormat::UnSignedInt:
+                formatType = "unsigned";
+                break;
+            case QAudioFormat::Float:
+                formatType = "float";
+                break;
+            case QAudioFormat::Unknown:
+                formatType = "unknown";
+                break;
+            }
+
+            QString formatChannels = QString("%1 channels").arg(format.channelCount());
+            switch (format.channelCount()) {
+            case 1:
+                formatChannels = "mono";
+                break;
+            case 2:
+                formatChannels = "stereo";
+                break;
+            }
+
+            result = QString("%1 Hz %2 bit %3 %4 %5")
+                .arg(format.sampleRate())
+                .arg(format.sampleSize())
+                .arg(formatType)
+                .arg(formatEndian)
+                .arg(formatChannels);
+        } else {
+            result = format.codec();
+        }
+    }
+
+    return result;
+}
+
+bool isPCM(const QAudioFormat &format)
+{
+    return (format.codec() == "audio/pcm");
+}
+
+
+bool isPCMS16LE(const QAudioFormat &format)
+{
+    return isPCM(format) &&
+           format.sampleType() == QAudioFormat::SignedInt &&
+           format.sampleSize() == 16 &&
+           format.byteOrder() == QAudioFormat::LittleEndian;
+}
+
+const qint16  PCMS16MaxValue     =  32767;
+const quint16 PCMS16MaxAmplitude =  32768; // because minimum is -32768
+
+qreal pcmToReal(qint16 pcm)
+{
+    return qreal(pcm) / PCMS16MaxAmplitude;
+}
+
+qint16 realToPcm(qreal real)
+{
+    return real * PCMS16MaxValue;
+}

@@ -2,6 +2,7 @@
 #define ENGINE_H
 
 #include <wavfile.h>
+#include <utils.h>
 
 #include <QAudioDeviceInfo>
 #include <QAudioFormat>
@@ -95,7 +96,6 @@ public:
      */
     qint64 dataLength() const { return m_dataLength; }
 
-
 public slots:
     void startRecording();
     void startPlayback();
@@ -152,14 +152,6 @@ signals:
      * \param numSamples Number of audio samples analyzed
      */
     void levelChanged(qreal rmsLevel, qreal peakLevel, int numSamples);
-
-    /**
-     * Spectrum has changed.
-     * \param position Position of start of window in bytes
-     * \param length   Length of window in bytes
-     * \param spectrum Resulting frequency spectrum
-     */
-    void spectrumChanged(qint64 position, qint64 length, const FrequencySpectrum &spectrum);
 
     /**
      * Buffer containing audio data has changed.
@@ -222,9 +214,11 @@ private:
 
     int                 m_spectrumBufferLength;
     QByteArray          m_spectrumBuffer;
-    Parser              m_parser;
+    int                 m_parser;
     qint64              m_spectrumPosition;
 
     int                 m_count;
+
+};
 
 #endif // ENGINE_H

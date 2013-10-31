@@ -15,6 +15,11 @@
  *
  */
 
+class Engine;
+class LevelMeter;
+class ProgressBar;
+class SettingsDialog;
+
 QT_BEGIN_NAMESPACE
 class QAction;
 class QAudioFormat;
@@ -61,6 +66,34 @@ private:
     };
 
     void setMode(Mode mode);
+
+private:
+    Mode                    m_mode;
+
+    Engine*                 m_engine;
+
+    ProgressBar*            m_progressBar;
+    LevelMeter*             m_levelMeter;
+
+    QPushButton*            m_modeButton;
+    QPushButton*            m_recordButton;
+    QIcon                   m_recordIcon;
+    QPushButton*            m_pauseButton;
+    QIcon                   m_pauseIcon;
+    QPushButton*            m_playButton;
+    QIcon                   m_playIcon;
+    QPushButton*            m_settingsButton;
+    QIcon                   m_settingsIcon;
+
+    QLabel*                 m_infoMessage;
+    int                     m_infoMessageTimerId;
+
+    SettingsDialog*         m_settingsDialog;
+
+    QMenu*                  m_modeMenu;
+    QAction*                m_loadFileAction;
+    QAction*                m_recordAction;
+
 };
 
 
