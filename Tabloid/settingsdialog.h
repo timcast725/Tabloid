@@ -14,9 +14,9 @@ class QGridLayout;
 QT_END_NAMESPACE
 
 /**
- * Dialog used to control settings such as the audio input / output device
- * and the windowing function.
+ * Dialog used to control settings such as the audio input / output device.
  */
+
 class SettingsDialog : public QDialog
 {
     Q_OBJECT

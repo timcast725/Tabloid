@@ -31,6 +31,10 @@ MainWidget::MainWidget(QWidget *parent)
     ,   m_pauseButton(new QPushButton(this))
     ,   m_playButton(new QPushButton(this))
     ,   m_settingsButton(new QPushButton(this))
+    ,   m_settingsDialog(new SettingsDialog(
+            m_engine->availableAudioInputDevices(),
+            m_engine->availableAudioOutputDevices(),
+            this))
     ,   m_infoMessage(new QLabel(tr("Select a mode to begin"), this))
     ,   m_infoMessageTimerId(NullTimerId)
     ,   m_modeMenu(new QMenu(this))
