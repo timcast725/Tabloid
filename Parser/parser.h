@@ -4,13 +4,14 @@
 #include <aubio/aubio.h>
 #include <aubio/sndfileio.h>
 
-// Right now this is empty and useless.
 class Parser
 {
 private:
-    aubio_sndfile_t *aubio_file;
+    aubio_sndfile_t *aubio_file_;
 public:
     Parser();
+    // PitchDetection current implementation is just a test example.
+    int PitchDetection();
 };
 
 
