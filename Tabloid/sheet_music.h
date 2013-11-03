@@ -12,11 +12,11 @@ public:
     //Constructor
     SheetMusic();
     //Instantiate the sheet music with measures
-    SheetMusic(vector<measure> new_measures);
+    SheetMusic(vector<Measure> new_measures);
     //Adds a single measure to the end of the sheet
-    void AddMeasure(measure new_measure);
+    void AddMeasure(Measure new_measure);
     //Adds a vector of measures to the end of the sheet
-    void AddMeasures(vector<measure> new_measures);
+    void AddMeasures(vector<Measure> new_measures);
     //Removes a single measure from the end of the sheet
     //and returns the measure removed.
     Measure RemoveLastMeasure();

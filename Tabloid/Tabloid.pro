@@ -12,7 +12,10 @@ HEADERS = \
     utils.h \
     progressbar.h \
     levelmeter.h \
-    settingsdialog.h
+    settingsdialog.h \
+    note.h \
+    sheet_music.h \
+    measure.h
 
 SOURCES = \
     main.cpp \
@@ -22,7 +25,10 @@ SOURCES = \
     utils.cpp \
     progressbar.cpp \
     levelmeter.cpp \
-    settingsdialog.cpp
+    settingsdialog.cpp \
+    note.cpp \
+    sheet_music.cpp \
+    measure.cpp
 
 maemo*: {
     FORMS += audiorecorder_small.ui
@@ -34,5 +40,7 @@ target.path = $$[QT_INSTALL_EXAMPLES]/multimedia/audiorecorder
 INSTALLS += target
 
 QT+=widgets
+
+QMAKE_CXXFLAGS += -std=gnu++0x
 
 FORMS +=

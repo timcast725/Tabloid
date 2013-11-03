@@ -9,7 +9,7 @@ SheetMusic::SheetMusic()
 }
 
 //Instantiation with a vector of measures to fill the sheet.
-SheetMusic::SheetMusic(vector<measure> new_measures)
+SheetMusic::SheetMusic(vector<Measure> new_measures)
 {
     AddMeasures(new_measures);
 }
@@ -30,19 +30,22 @@ void SheetMusic::AddMeasures(vector<Measure> new_measures)
 }
 
 //Remove the last measure in the SheetMusic
-measure SheetMusic::RemoveLastMeasure()
+Measure SheetMusic::RemoveLastMeasure()
 {
-    return measures.pop_back();
+    Measure ret = measures[measures.size()-1];
+    measures.pop_back();
+    return ret;
 }
+
 //Remove the first measure in the SheetMusic
-measure SheetMusic::RemoveHeadMeasure()
+Measure SheetMusic::RemoveHeadMeasure()
 {
     Measure head_measure = measures[0];
-    measures.erase(0);
+    measures.erase(measures.begin());
     return head_measure;
 }
 
-vector<measure> SheetMusic::GetAllMeasures()
+vector<Measure> SheetMusic::GetAllMeasures()
 {
     return measures;
 }

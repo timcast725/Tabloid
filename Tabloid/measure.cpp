@@ -31,13 +31,15 @@ void Measure::AddNotes(vector<Note> new_notes)
 //Remove the last note in the measure
 Note Measure::RemoveLastNote()
 {
-    return notes.pop_back();
+    Note last = notes[notes.size()-1];
+    notes.pop_back();
+    return last;
 }
 //Remove the first note in the measure
 Note Measure::RemoveHeadNote()
 {
     Note head_note = notes[0];
-    notes.erase(0);
+    notes.erase(notes.begin());
     return head_note;
 }
 

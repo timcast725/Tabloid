@@ -6,6 +6,7 @@
 #define MEASURE_H
 
 #include "note.h"
+#include <vector>
 
 using namespace std;
 
