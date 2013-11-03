@@ -3,6 +3,7 @@
 
 #include <wavfile.h>
 #include <utils.h>
+#include <parser.h>
 
 #include <QAudioDeviceInfo>
 #include <QAudioFormat>
@@ -214,7 +215,7 @@ private:
 
     int                 m_spectrumBufferLength;
     QByteArray          m_spectrumBuffer;
-    int                 m_parser;
+    Parser              m_parser;
     qint64              m_spectrumPosition;
 
     int                 m_count;

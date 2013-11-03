@@ -15,7 +15,8 @@ HEADERS = \
     settingsdialog.h \
     note.h \
     sheet_music.h \
-    measure.h
+    measure.h \
+    parser.h
 
 SOURCES = \
     main.cpp \
@@ -28,7 +29,8 @@ SOURCES = \
     settingsdialog.cpp \
     note.cpp \
     sheet_music.cpp \
-    measure.cpp
+    measure.cpp \
+    parser.cpp
 
 maemo*: {
     FORMS += audiorecorder_small.ui
