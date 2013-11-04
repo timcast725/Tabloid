@@ -45,4 +45,8 @@ QT+=widgets
 
 QMAKE_CXXFLAGS += -std=gnu++0x
 
+unix:!macx: LIBS += -laubio
+
+unix:!macx: LIBS += -laubioext
+
 FORMS +=
