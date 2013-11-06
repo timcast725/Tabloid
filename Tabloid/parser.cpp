@@ -5,6 +5,19 @@ Parser::Parser()
     aubio_file_ = new_aubio_sndfile_ro("../Bb.wav");
 }
 
+Parser::Parser(SheetMusic music)
+{
+   aubio_file_ = new_aubio_sndfile_ro("../Bb.wav");
+   m_sheetmusic = music;
+}
+
+
+void Parser::init(string filename)
+{
+    aubio_file_ = new_aubio_sndfile_ro(filename.c_str());
+    m_sheetmusic = new SheetMusic ();
+}
+
 int Parser::PitchDetection()
 {
     // I don't know what these numbers mean, I just found them as
@@ -21,7 +34,7 @@ int Parser::PitchDetection()
 
     // YIN is a time-domain approach that uses autocorrelation.
     //     Fast, requires a minimum audio length, only one note at a time.
-    //     De Cheveigné, A., Kawahara, H. (2002) "YIN, a fundamental frequency
+    //     De Cheveigné, A., Kawahara, H. (2002) "YIN, a fundamental frequencyt
     //     estimator for speech and music", J. Acoust. Soc. Am. 111, 1917-1930.
     // mcomb uses a multi-comb filter, spectral flattening, peak histogramming.
     //     I think it uses both time and frequency domains.

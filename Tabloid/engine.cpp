@@ -46,9 +46,8 @@ Engine::Engine(QObject *parent)
     ,   m_levelBufferLength(0)
     ,   m_rmsLevel(0.0)
     ,   m_peakLevel(0.0)
-    ,   m_spectrumBufferLength(0)
-    ,   m_parser()
-    ,   m_spectrumPosition(0)
+    ,   m_sheetmusic()
+    ,   m_parser(m_sheetmusic)
     ,   m_count(0)
 {
     initialize();
@@ -208,9 +207,6 @@ void Engine::audioNotify()
             const qint64 levelPosition = m_dataLength - m_levelBufferLength;
             if (levelPosition >= 0)
                 calculateLevel(levelPosition, m_levelBufferLength);
-            if (m_dataLength >= m_spectrumBufferLength) {
-                const qint64 spectrumPosition = m_dataLength - m_spectrumBufferLength;
-            }
             emit bufferChanged(0, m_dataLength, m_buffer);
         }
         break;
@@ -218,7 +214,6 @@ void Engine::audioNotify()
             const qint64 playPosition = audioLength(m_format, m_audioOutput->processedUSecs());
             setPlayPosition(qMin(bufferLength(), playPosition));
             const qint64 levelPosition = playPosition - m_levelBufferLength;
-            const qint64 spectrumPosition = playPosition - m_spectrumBufferLength;
             if (m_file) {
                 if (levelPosition > m_bufferPosition ||
                     spectrumPosition > m_bufferPosition ||
@@ -313,7 +308,6 @@ void Engine::resetAudioDevices()
     delete m_audioOutput;
     m_audioOutput = 0;
     setPlayPosition(0);
-    m_spectrumPosition = 0;
     setLevel(0.0, 0.0, 0);
 }
 

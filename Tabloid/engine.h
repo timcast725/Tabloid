@@ -4,6 +4,7 @@
 #include <wavfile.h>
 #include <utils.h>
 #include <parser.h>
+#include <sheet_music.h>
 
 #include <QAudioDeviceInfo>
 #include <QAudioFormat>
@@ -12,12 +13,6 @@
 #include <QDir>
 #include <QObject>
 #include <QVector>
-
-/**
- *#include <parser.h>
- *#include <sheetMusic.h>
- *etc...
- */
 
 
 /**
@@ -180,6 +175,7 @@ private:
     void calculateLevel(qint64 position, qint64 length);
     void parse(qint64 position);
     void setLevel(qreal rmsLevel, qreal peakLevel, int numSamples);
+    void parse();
 
 private:
     QAudio::Mode        m_mode;
@@ -213,10 +209,8 @@ private:
     qreal               m_rmsLevel;
     qreal               m_peakLevel;
 
-    int                 m_spectrumBufferLength;
-    QByteArray          m_spectrumBuffer;
     Parser              m_parser;
-    qint64              m_spectrumPosition;
+    SheetMusic          m_sheetmusic;
 
     int                 m_count;
 

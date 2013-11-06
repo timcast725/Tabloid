@@ -35,6 +35,9 @@ public:
 private:
     //Holds all the notes in this measure
     vector<Note> notes;
+
+    //Tempo is a millisecond value that is how many milliseconds are there per beat
+    int tempo;
 };
 
 #endif // MEASURE_H
