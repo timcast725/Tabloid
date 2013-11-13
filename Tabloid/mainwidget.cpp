@@ -31,6 +31,7 @@ MainWidget::MainWidget(QWidget *parent)
     ,   m_pauseButton(new QPushButton(this))
     ,   m_playButton(new QPushButton(this))
     ,   m_settingsButton(new QPushButton(this))
+    ,   m_parseButton(new QPushButton(this))
     ,   m_settingsDialog(new SettingsDialog(
             m_engine->availableAudioInputDevices(),
             m_engine->availableAudioOutputDevices(),
@@ -203,6 +204,10 @@ void MainWidget::createUi()
     m_settingsButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_settingsButton->setMinimumSize(buttonSize);
 
+    m_parseButton->setEnabled(true);
+    m_parseButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    m_parseButton->setMinimumSize(buttonSize);
+
     QScopedPointer<QHBoxLayout> buttonPanelLayout(new QHBoxLayout);
     buttonPanelLayout->addStretch();
     buttonPanelLayout->addWidget(m_modeButton);
@@ -210,6 +215,7 @@ void MainWidget::createUi()
     buttonPanelLayout->addWidget(m_pauseButton);
     buttonPanelLayout->addWidget(m_playButton);
     buttonPanelLayout->addWidget(m_settingsButton);
+    buttonPanelLayout->addWidget(m_parseButton);
 
     QWidget *buttonPanel = new QWidget(this);
     buttonPanel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);

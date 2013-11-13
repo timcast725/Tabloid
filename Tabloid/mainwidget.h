@@ -81,6 +81,7 @@ private:
     QPushButton*            m_pauseButton;
     QIcon                   m_pauseIcon;
     QPushButton*            m_playButton;
+    QPushButton*            m_parseButton;
     QIcon                   m_playIcon;
     QPushButton*            m_settingsButton;
     QIcon                   m_settingsIcon;
