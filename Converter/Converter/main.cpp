@@ -3,6 +3,7 @@
 #include "measure.h"
 #include "sheet_music.h"
 #include "converter.h"
+#include "midi_converter.h"
 
 using namespace std;
 
@@ -44,8 +45,12 @@ int main(int argc, char *argv[])
 
     vector<Measure>::iterator sheet_iter = test_sheet.GetAllMeasures().begin();
 
-    Converter test_converter;
-    test_converter.convert(test_sheet);
+    MidiConverter test_converter = MidiConverter("TestOutput");
+    cout << "\ntest_converter's output_file_name_: " << test_converter.output_file_name();
+    test_converter.Convert(test_sheet);
+    MidiConverter test_converter2 = MidiConverter();
+    cout << "\ntest_converter2's output_file_name_: " << test_converter2.output_file_name();
+    test_converter2.Convert(test_sheet);
 
     //midi events are formatted as an unsigned character array of size 3:
     //0: 0x90 to store a note as ON
@@ -78,7 +83,7 @@ int main(int argc, char *argv[])
     int event_time = 0; //time at which this event takes place
     i = 0;
 
-    while(melody[i] >= 0)
+/*    while(melody[i] >= 0)
     {
         temp_event[0] = 0x90; //turn the note on
         temp_event[1] = melody[i]; //set the note's pitch
@@ -93,9 +98,9 @@ int main(int argc, char *argv[])
         test_output_file.addEvent(0, event_time, temp_event);
         cout << "\nturning event off at " << event_time;
         i++;
-    }
+    }*/
 
-    test_output_file.write("TestMidi.mid"); //write the midi file we just made
+    //test_output_file.write("TestMidi.mid"); //write the midi file we just made
 
     return a.exec();
 }

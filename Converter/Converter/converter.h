@@ -5,15 +5,14 @@
 #define CONVERTER_H
 
 #include "sheet_music.h"
-#include "MidiFile.h"
 
 class Converter
 {
-private:
-
 public:
-    Converter();
-    bool convert(SheetMusic sheet);
+    Converter(){};
+    virtual bool Convert(SheetMusic sheet) = 0;
+
+private:
 };
 
 

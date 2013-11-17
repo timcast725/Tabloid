@@ -26,8 +26,8 @@ SOURCES += main.cpp \
     ../../third-party/midifile/src/FileIO.cpp \
     ../../tabloid/sheet_music.cpp \
     ../../tabloid/measure.cpp \
-    converter.cpp \
-    ../../tabloid/note.cpp
+    ../../tabloid/note.cpp \
+    midi_converter.cpp
 
 HEADERS += \
     ../../third-party/midifile/include/sigConfiguration.h \
@@ -40,4 +40,5 @@ HEADERS += \
     converter.h \
     ../../tabloid/sheet_music.h \
     ../../tabloid/measure.h \
-    ../../tabloid/note.h
+    ../../tabloid/note.h \
+    midi_converter.h
