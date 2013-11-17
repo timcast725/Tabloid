@@ -23,9 +23,10 @@ void SheetMusic::AddMeasure(Measure new_measure)
 //Add several measures in vector form
 void SheetMusic::AddMeasures(vector<Measure> new_measures)
 {
-    for (auto &new_measure : new_measures)
+    for (vector<Measure>::iterator it = new_measures.begin();
+         it != new_measures.end(); it++)
     {
-        measures.push_back(new_measure);
+        measures.push_back(*it);
     }
 }
 

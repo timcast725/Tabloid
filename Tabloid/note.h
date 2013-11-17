@@ -15,13 +15,21 @@ class Note
 public:
     //Constructor
     Note(int p, int v, int d, int s);
+    Note();
 
+    int GetPitch();
+    int GetVelocity();
+    int GetDuration();
+    int GetStart();
+
+private:
     int pitch;
     int velocity;
     //Duration is a millisecond value
     int duration;
     //start is a millisecond value
     int start;
+
 };
 
 #endif // NOTE_H

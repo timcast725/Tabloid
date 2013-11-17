@@ -1,7 +1,7 @@
 #ifndef SHEET_MUSIC_H
 #define SHEET_MUSIC_H
 
-#import "measure.h"
+#include "measure.h"
 
 using namespace std;
 

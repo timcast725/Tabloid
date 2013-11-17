@@ -13,7 +13,7 @@ private:
 
 public:
     Converter();
-    bool convert(sheet_music sheet);
+    bool convert(SheetMusic sheet);
 };
 
 

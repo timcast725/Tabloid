@@ -22,9 +22,10 @@ void Measure::AddNote(Note new_note)
 //Add several notes in vector form
 void Measure::AddNotes(vector<Note> new_notes)
 {
-    for (auto &new_note : new_notes)
+    for (vector<Note>::iterator it = new_notes.begin();
+         it != new_notes.end(); it++)
     {
-        notes.push_back(new_note);
+        notes.push_back(*it);
     }
 }
 
