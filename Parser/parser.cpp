@@ -1,3 +1,5 @@
+// Written by Gary Lu
+
 #include "parser.h"
 #include <iostream>
 

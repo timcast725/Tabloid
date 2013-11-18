@@ -1,3 +1,5 @@
+// Written by Gary Lu
+
 #ifndef PARSER_H
 #define PARSER_H
 
