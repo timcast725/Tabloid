@@ -84,38 +84,6 @@ void Parser::AubioProcess()
     // AubioInit must be called each time.
 }
 
-
-// Defunct
-int Parser::PitchDetection()
-{
-    // The size of the music file.
-    uint_t buffer_size = 1024;
-    uint_t hop_size = buffer_size / 4;
-    uint_t samplerate = aubio_sndfile_samplerate(aubio_file_);
-    uint_t channels = aubio_sndfile_channels(aubio_file_);
-
-    // This gives results in frequency.
-    // Other options are MIDI, cent, and frequency bin.
-    aubio_pitchdetection_mode mode = aubio_pitchm_freq;
-
-
-    aubio_pitchdetection_type type = aubio_pitch_yinfft;
-
-    fvec_t *input = new_fvec(hop_size, channels);
-    aubio_pitchdetection_t *output;
-    output = new_aubio_pitchdetection(buffer_size, hop_size, channels,
-                                      samplerate, type, mode);
-    for (int i = 0; i < 1000; i++)
-        aubio_pitchdetection(output, input);
-
-    // Must destroy aubio objects once done.
-    del_aubio_pitchdetection(output);
-    del_fvec(input);
-    aubio_cleanup();
-
-    return 0;
-}
-
 int Parser::AubioNotes(int nframes)
 {
     // pos keeps track of position, is frame % dsp block size

@@ -79,15 +79,14 @@ public:
     ~Parser();
 
     // Initializes member variables according to the input file.
+    // Every time you want to parse a file, you must call this.
     // @param file_name The file Parser will parse.
     void AubioInit(const char *file_name);
 
     // Runs an aubio function on the aubio file.
     // Currently only AubioNotes available.
+    // To see the notes in the file, you must call this after AubioInit.
     void AubioProcess();
-
-    // PitchDetection current implementation is just from the test example.
-    int PitchDetection();
 
 private:
     int AubioNotes(int nframes);
