@@ -3,6 +3,8 @@
 
 #include <math.h>
 
+#include <string>
+
 #include <QAudioInput>
 #include <QAudioOutput>
 #include <QCoreApplication>
@@ -47,7 +49,8 @@ Engine::Engine(QObject *parent)
     ,   m_rmsLevel(0.0)
     ,   m_peakLevel(0.0)
     ,   m_sheetmusic()
-    ,   m_parser(m_sheetmusic)
+    ,   m_parser()
+    ,   m_filename()
     ,   m_count(0)
 {
     initialize();
@@ -83,6 +86,7 @@ bool Engine::loadFile(const QString &fileName)
     if (result) {
         m_analysisFile = new WavFile(this);
         m_analysisFile->open(fileName);
+        m_filename = fileName;
     }
     return result;
 }
@@ -165,6 +169,12 @@ void Engine::startPlayback()
     }
 }
 
+void Engine::startParse() {
+    parse();
+    return;
+
+}
+
 void Engine::suspend()
 {
     if (QAudio::ActiveState == m_state ||
@@ -215,14 +225,11 @@ void Engine::audioNotify()
             setPlayPosition(qMin(bufferLength(), playPosition));
             const qint64 levelPosition = playPosition - m_levelBufferLength;
             if (m_file) {
-                if (levelPosition > m_bufferPosition ||
-                    spectrumPosition > m_bufferPosition ||
-                    qMax(m_levelBufferLength, m_spectrumBufferLength) > m_dataLength) {
-                    m_bufferPosition = 0;
+                if (levelPosition > m_bufferPosition) {
                     m_dataLength = 0;
                     // Data needs to be read into m_buffer in order to be analysed
-                    const qint64 readPos = qMax(qint64(0), qMin(levelPosition, spectrumPosition));
-                    const qint64 readEnd = qMin(m_analysisFile->size(), qMax(levelPosition + m_levelBufferLength, spectrumPosition + m_spectrumBufferLength));
+                    const qint64 readPos = qMax(qint64(0), levelPosition);
+                    const qint64 readEnd = qMin(m_analysisFile->size(), levelPosition + m_levelBufferLength);
                     const qint64 readLen = readEnd - readPos;
                     qDebug() << "Engine::audioNotify [1]"
                              << "analysisFileSize" << m_analysisFile->size()
@@ -531,9 +538,10 @@ void Engine::calculateLevel(qint64 position, qint64 length)
 #endif
 }
 
-void Engine::parse(qint64 position) {
+void Engine::parse() {
 
-    //m_parser.parse(position);
+    std::string filename = m_filename.toStdString();
+    m_parser.AubioInit(filename);
 }
 
 void Engine::setFormat(const QAudioFormat &format)

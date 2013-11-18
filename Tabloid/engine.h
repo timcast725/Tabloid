@@ -95,6 +95,7 @@ public:
 public slots:
     void startRecording();
     void startPlayback();
+    void startParse();
     void suspend();
     void setAudioInputDevice(const QAudioDeviceInfo &device);
     void setAudioOutputDevice(const QAudioDeviceInfo &device);
@@ -173,7 +174,6 @@ private:
     void setRecordPosition(qint64 position, bool forceEmit = false);
     void setPlayPosition(qint64 position, bool forceEmit = false);
     void calculateLevel(qint64 position, qint64 length);
-    void parse(qint64 position);
     void setLevel(qreal rmsLevel, qreal peakLevel, int numSamples);
     void parse();
 
@@ -208,6 +208,8 @@ private:
     int                 m_levelBufferLength;
     qreal               m_rmsLevel;
     qreal               m_peakLevel;
+
+    QString             m_filename;
 
     Parser              m_parser;
     SheetMusic          m_sheetmusic;

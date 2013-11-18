@@ -243,6 +243,9 @@ void MainWidget::connectUi()
     CHECKED_CONNECT(m_playButton, SIGNAL(clicked()),
             m_engine, SLOT(startPlayback()));
 
+    CHECKED_CONNECT(m_parseButton, SIGNAL(clicked()),
+            m_engine, SLOT(startParse()));
+
     CHECKED_CONNECT(m_settingsButton, SIGNAL(clicked()),
             this, SLOT(showSettingsDialog()));
 
