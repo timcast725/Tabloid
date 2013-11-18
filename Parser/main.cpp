@@ -7,7 +7,11 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
 
     Parser parse;
-    std::cout << parse.PitchDetection() << std::endl;
+    parse.AubioInit("Bb.wav");
+    parse.AubioProcess();
+
+    parse.AubioInit("sdd_test.wav");
+    parse.AubioProcess();
 
     return a.exec();
 }
