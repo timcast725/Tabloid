@@ -5,6 +5,8 @@ QT += multimedia
 
 win32:INCLUDEPATH += $$PWD
 
+INCLUDEPATH += ../third-party/midifile/include
+
 HEADERS = \
     mainwidget.h \
     engine.h \
@@ -16,7 +18,17 @@ HEADERS = \
     note.h \
     sheet_music.h \
     measure.h \
-    parser.h
+    parser.h \
+    converter.h \
+    midi_converter.h \
+    ../third-party/midifile/include/MidiFile.h \
+    ../third-party/midifile/include/Array.h \
+    ../third-party/midifile/include/sigConfiguration.h \
+    ../third-party/midifile/include/SigCollection.h \
+    ../third-party/midifile/include/Options.h \
+    ../third-party/midifile/include/Options_private.h \
+    ../third-party/midifile/include/FileIO.h \
+    ../third-party/midifile/src/MidiFile.cpp.autosave
 
 SOURCES = \
     main.cpp \
@@ -30,7 +42,13 @@ SOURCES = \
     note.cpp \
     sheet_music.cpp \
     measure.cpp \
-    parser.cpp
+    parser.cpp \
+    midi_converter.cpp \
+    ../third-party/midifile/include/SigCollection.cpp \
+    ../third-party/midifile/src/Options.cpp \
+    ../third-party/midifile/src/Options_private.cpp \
+    ../third-party/midifile/src/MidiFile.cpp \
+    ../third-party/midifile/src/FileIO.cpp
 
 maemo*: {
     FORMS += audiorecorder_small.ui

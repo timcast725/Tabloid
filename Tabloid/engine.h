@@ -5,6 +5,8 @@
 #include <utils.h>
 #include <parser.h>
 #include <sheet_music.h>
+#include <converter.h>
+#include <midi_converter.h>d
 
 #include <QAudioDeviceInfo>
 #include <QAudioFormat>
@@ -176,6 +178,8 @@ private:
     void calculateLevel(qint64 position, qint64 length);
     void setLevel(qreal rmsLevel, qreal peakLevel, int numSamples);
     void parse();
+    void midi_convert(SheetMusic music);
+    //void music_xml_convert(SheetMusic music);
 
 private:
     QAudio::Mode        m_mode;
