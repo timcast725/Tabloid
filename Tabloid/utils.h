@@ -3,6 +3,9 @@
 
 #include <QtCore/qglobal.h>
 #include <QDebug>
+#include <QFile>
+
+#include <string>
 
 QT_FORWARD_DECLARE_CLASS(QAudioFormat)
 
@@ -28,6 +31,8 @@ bool isPCM(const QAudioFormat &format);
 
 // Check whether the audio format is signed, little-endian, 16-bit PCM
 bool isPCMS16LE(const QAudioFormat &format);
+
+void writeWaveFile (QString filename, QByteArray data, qint64 length, QAudioFormat format);
 
 // Compile-time calculation of powers of two
 

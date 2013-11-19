@@ -97,3 +97,60 @@ qint16 realToPcm(qreal real)
 {
     return real * PCMS16MaxValue;
 }
+
+// writes the recorded audio data into a .WAV file
+void writeWaveFile(QString filename, QByteArray data, qint64 length, QAudioFormat format)
+{
+    if (length == 0)
+    {
+        printf("Could not save recorded data, nothing recorded\n");
+        return;
+    }
+    std::string filename_str  = filename.toStdString();
+
+
+    FILE* file = fopen(filename_str.c_str() , "wb");
+
+    if (file)
+    {
+        // write wave header
+        unsigned short formatType =	1;
+        unsigned short numChannels = format.channelCount();
+        unsigned long  sampleRate = format.sampleRate();
+        unsigned short bitsPerChannel = format.sampleSize() * 8;
+        unsigned short bytesPerSample = format.bytesPerFrame();
+        unsigned long  bytesPerSecond = format.bytesForDuration(1000000);
+        unsigned long  dataLen = length;
+
+        const int fmtChunkLen = 16;
+        const int waveHeaderLen = 4 + 8 + fmtChunkLen + 8;
+
+        unsigned long totalLen = waveHeaderLen + dataLen;
+
+        fwrite("RIFF", 4, 1, file);
+        fwrite(&totalLen, 4, 1, file);
+        fwrite("WAVE", 4, 1, file);
+        fwrite("fmt ", 4, 1, file);
+        fwrite(&fmtChunkLen, 4, 1, file);
+        fwrite(&formatType, 2, 1, file);
+        fwrite(&numChannels, 2, 1, file);
+        fwrite(&sampleRate, 4, 1, file);
+        fwrite(&bytesPerSecond, 4, 1, file);
+        fwrite(&bytesPerSample, 2, 1, file);
+        fwrite(&bitsPerChannel, 2, 1, file);
+
+        // write data
+
+        fwrite("data", 4, 1, file);
+        fwrite(&dataLen, 4, 1, file);
+        fwrite(data, dataLen, 1, file);
+
+        // finish
+
+        printf("Saved audio as %s\n", filename_str.c_str());
+        fclose(file);
+    }
+    else
+        printf("Could not open %s to write audio data\n", filename_str.c_str());
+
+}

@@ -51,13 +51,14 @@ Engine::Engine(QObject *parent)
     ,   m_sheetmusic()
     ,   m_parser()
     ,   m_filename()
+    ,   m_recorder()
     ,   m_count(0)
 {
     initialize();
 
-#ifdef DUMP_DATA
+
     createOutputDir();
-#endif
+
 
 }
 
@@ -458,9 +459,9 @@ void Engine::stopRecording()
     }
     m_audioInputIODevice = 0;
 
-#ifdef DUMP_AUDIO
+
     dumpData();
-#endif
+
 }
 
 void Engine::stopPlayback()
@@ -605,7 +606,7 @@ void Engine::setLevel(qreal rmsLevel, qreal peakLevel, int numSamples)
     emit levelChanged(m_rmsLevel, m_peakLevel, numSamples);
 }
 
-#ifdef DUMP_DATA
+
 void Engine::createOutputDir()
 {
     m_outputDir.setPath("output");
@@ -622,25 +623,12 @@ void Engine::createOutputDir()
         QDir::current().mkdir("output");
     }
 }
-#endif // DUMP_DATA
 
-#ifdef DUMP_AUDIO
+
 void Engine::dumpData()
-{
-    const QString txtFileName = m_outputDir.filePath("data.txt");
-    QFile txtFile(txtFileName);
-    txtFile.open(QFile::WriteOnly | QFile::Text);
-    QTextStream stream(&txtFile);
-    const qint16 *ptr = reinterpret_cast<const qint16*>(m_buffer.constData());
-    const int numSamples = m_dataLength / (2 * m_format.channels());
-    for (int i=0; i<numSamples; ++i) {
-        stream << i << "\t" << *ptr << "\n";
-        ptr += m_format.channels();
-    }
-
-    const QString pcmFileName = m_outputDir.filePath("data.pcm");
-    QFile pcmFile(pcmFileName);
-    pcmFile.open(QFile::WriteOnly);
-    pcmFile.write(m_buffer.constData(), m_dataLength);
+{ 
+    const QString filename = m_outputDir.filePath("data.wav");
+    writeWaveFile (filename, m_buffer, m_dataLength, m_format);
+    m_filename = filename;
 }
-#endif // DUMP_AUDIO
+

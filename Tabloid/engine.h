@@ -6,10 +6,11 @@
 #include <parser.h>
 #include <sheet_music.h>
 #include <converter.h>
-#include <midi_converter.h>d
+#include <midi_converter.h>
 
 #include <QAudioDeviceInfo>
 #include <QAudioFormat>
+#include <QAudioRecorder>
 #include <QBuffer>
 #include <QByteArray>
 #include <QDir>
@@ -179,6 +180,8 @@ private:
     void setLevel(qreal rmsLevel, qreal peakLevel, int numSamples);
     void parse();
     void midi_convert(SheetMusic music);
+    void createOutputDir ();
+    void dumpData ();
     //void music_xml_convert(SheetMusic music);
 
 private:
@@ -214,6 +217,9 @@ private:
     qreal               m_peakLevel;
 
     QString             m_filename;
+    QDir                m_outputDir;
+
+    QAudioRecorder *    m_recorder;
 
     Parser              m_parser;
     SheetMusic          m_sheetmusic;
