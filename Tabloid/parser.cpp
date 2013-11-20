@@ -5,11 +5,20 @@
 #include <sndfile.h>
 #include <sys/stat.h>
 
-void Parser::Parse(const char *file_name)
+Parser::Parser()
+{
+    last_pitch_ = -1;
+    last_velocity_ = -1;
+    last_time_ = -1;
+}
+
+SheetMusic Parser::Parse(const char *file_name)
 {
     AubioInit(file_name);
     AubioProcess();
     AubioDelete();
+    sheet_.AddMeasure(measure_);
+    return sheet_;
 }
 
 void Parser::AubioInit(const char *file_name)
@@ -18,8 +27,8 @@ void Parser::AubioInit(const char *file_name)
     buffer_size_ = 1024;
     overlap_size_ = 256;
     pitch_ = 0;
-    cur_note_ = 0;
-    cur_level_ = 0;
+    curr_note_ = 0;
+    curr_level_ = 0;
     frames_ = 0;
     is_onset_ = false;
 
@@ -71,7 +80,6 @@ void Parser::AubioProcess()
 void Parser::AubioDelete()
 {
     del_aubio_sndfile(aubio_file_);
-    SendNoteOn(cur_note_, 0);
     del_aubio_pitchdetection(pitch_detection_);
     del_aubio_onsetdetection(onset_detection_);
     del_aubio_peakpicker(peak_);
@@ -100,16 +108,16 @@ int Parser::AubioNotes(int nframes)
             if (is_onset_)
             {
                 // Test for silence.
-                if (cur_level_ == 1)
+                if (curr_level_ == 1)
                 {
                     is_onset_ = 0;
-                    SendNoteOn(cur_note_, 0);
+                    SendNoteOn(curr_note_, 0);
                 }
                 else
                 {
                     // Get and send new note.
-                    SendNoteOn(pitch_, 127 + (int) cur_level_);
-                    cur_note_ = pitch_;
+                    SendNoteOn(pitch_, 127 + (int) curr_level_);
+                    curr_note_ = pitch_;
                 }
             }
             pos = -1;
@@ -124,8 +132,15 @@ void Parser::SendNoteOn(int pitch, int velocity)
 {
     smpl_t mpitch = (int) (aubio_freqtomidi(pitch) + 0.5);
     float time = (float) frames_ * overlap_size_ / (float) samplerate_;
-    if (velocity == 0)
-        std::cout << "pitch: none" << "\t\ttime: " << time << std::endl;
-    else
-        std::cout << "pitch: " << mpitch << "\t\ttime: " << time << std::endl;
+    std::cout << "pitch: " << mpitch << "\t\ttime: " << time << std::endl;
+    if (last_pitch_ > 0)
+    {
+        int duration = (int) (1000 * (time - last_time_) );
+        int start = (int) (1000 * last_time_);
+        Note note(last_pitch_, last_velocity_, duration, start);
+        measure_.AddNote(note);
+    }
+    last_pitch_ = mpitch;
+    last_velocity_ = velocity;
+    last_time_ = time;
 }
