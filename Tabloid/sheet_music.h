@@ -27,6 +27,8 @@ public:
     //Accessor for measure vector
     vector<Measure> GetAllMeasures();
 
+    void reset();
+
 private:
     //Vector of measures representing the music
     vector<Measure> measures;

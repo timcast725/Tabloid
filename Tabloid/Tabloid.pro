@@ -5,7 +5,8 @@ QT += multimedia
 
 win32:INCLUDEPATH += $$PWD
 
-INCLUDEPATH += ../third-party/midifile/include
+INCLUDEPATH += ../third-party/midifile/include \
+    ../Converter/Converter
 
 HEADERS = \
     mainwidget.h \

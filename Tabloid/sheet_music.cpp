@@ -51,3 +51,8 @@ vector<Measure> SheetMusic::GetAllMeasures()
     return measures;
 }
 
+void SheetMusic::reset()
+{
+    measures.clear();
+}
+

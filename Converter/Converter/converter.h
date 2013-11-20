@@ -9,7 +9,7 @@
 class Converter
 {
 public:
-    Converter(){};
+    Converter();
     virtual bool Convert(SheetMusic sheet) = 0;
 
 private:

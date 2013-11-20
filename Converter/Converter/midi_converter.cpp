@@ -5,6 +5,7 @@
 #include <time.h>
 #include <string>
 #include <sstream>
+#include <stdio.h>
 
 #include "MidiFile.h"
 
@@ -32,6 +33,7 @@ void MidiConverter::set_output_file_name(string new_name)
     temp_stream << new_name << ".mid";
     output_file_name_ = temp_stream.str();
     cout << "\nsetting output file name to " << output_file_name_;
+
 }
 string MidiConverter::output_file_name()
 {
@@ -55,6 +57,7 @@ bool MidiConverter::Convert(SheetMusic sheet)
         SetFileNameToDefault();
         cout << "\nIn convert if, output_file_name_ = " << output_file_name_;
     }
+    remove (output_file_name_.c_str());
     MidiFile temp_file;
     temp_file.absoluteTime();
     Array<uchar> temp_event;
@@ -68,7 +71,11 @@ bool MidiConverter::Convert(SheetMusic sheet)
     // default Beats per Measure of 120.
     // NOTE: This calculation will not be valid if the BPM is changed.
     int ticks_per_quarter = temp_file.getTicksPerQuarterNote();
-    double milliseconds_per_tick = ((double)500/(double)ticks_per_quarter);
+    //int ticks_per_quarter = 48;
+    double beats_per_measure = 120;
+    double milliseconds_per_tick = ((double)60000/((double)ticks_per_quarter*beats_per_measure));
+    cout << "\nmilliseconds per tick " << milliseconds_per_tick;
+   // double milliseconds_per_tick = ;
 
     int event_time;
 
@@ -89,13 +96,13 @@ bool MidiConverter::Convert(SheetMusic sheet)
             temp_event[1] = measure_iter->GetPitch();
             cout << "\nNEW NOTE: setting pitch " << measure_iter->GetPitch();
             event_time =
-                (int)((measure_iter->GetStart())/milliseconds_per_tick+0.5);
+                (int)((measure_iter->GetStart())/milliseconds_per_tick);
             //Add the event (turn on velocity, pitch) to the midi file at time event_time
             temp_file.addEvent(0, event_time, temp_event);
             cout << "\nadding event at " << event_time;
             //Increment event_time by the duration of the note
             event_time +=
-                (int)((measure_iter->GetDuration())/milliseconds_per_tick + 0.5);
+                (int)((measure_iter->GetDuration())/milliseconds_per_tick);
             temp_event[0] = 0x80; //turn the pitch and velocity off
             //Add the event (turn off velocity, pitch) to the midi file at time event_time
             temp_file.addEvent(0, event_time, temp_event);
@@ -103,7 +110,7 @@ bool MidiConverter::Convert(SheetMusic sheet)
         }
     }
 
-    cout << "\nwriting midi file " << output_file_name_;
+    cout << "\nwriting midi file " << output_file_name_ << endl;
     temp_file.write(output_file_name_.c_str()); //write the midi file we just made
 
     return true;
