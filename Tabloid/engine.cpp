@@ -183,6 +183,7 @@ void Engine::suspend()
         switch (m_mode) {
         case QAudio::AudioInput:
             m_audioInput->suspend();
+            stopRecording();
             break;
         case QAudio::AudioOutput:
             m_audioOutput->suspend();
@@ -627,8 +628,9 @@ void Engine::createOutputDir()
 
 void Engine::dumpData()
 { 
-    const QString filename = m_outputDir.filePath("data.wav");
+    const QString filename =("data.wav");
     writeWaveFile (filename, m_buffer, m_dataLength, m_format);
-    m_filename = filename;
+    QFileInfo info (filename);
+    m_filename = info.absoluteFilePath();
 }
 

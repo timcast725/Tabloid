@@ -117,7 +117,7 @@ void writeWaveFile(QString filename, QByteArray data, qint64 length, QAudioForma
         unsigned short formatType =	1;
         unsigned short numChannels = format.channelCount();
         unsigned long  sampleRate = format.sampleRate();
-        unsigned short bitsPerChannel = format.sampleSize() * 8;
+        unsigned short bitsPerChannel = format.sampleSize();
         unsigned short bytesPerSample = format.bytesPerFrame();
         unsigned long  bytesPerSecond = format.bytesForDuration(1000000);
         unsigned long  dataLen = length;
