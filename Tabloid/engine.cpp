@@ -16,7 +16,7 @@
 
 //Constants
 
-const qint64 BufferDurationUs       = 10000000;
+const qint64 BufferDurationUs       = 100000000;
 const int    NotifyIntervalMs       = 100;
 
 // Size of the level calculation window in microseconds
