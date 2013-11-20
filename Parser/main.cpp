@@ -7,11 +7,9 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
 
     Parser parse;
-    parse.AubioInit("Bb.wav");
-    parse.AubioProcess();
+    parse.Parse("Bb.wav");
 
-    parse.AubioInit("sdd_test.wav");
-    parse.AubioProcess();
+    parse.Parse("sdd_test.wav");
 
     return a.exec();
 }
