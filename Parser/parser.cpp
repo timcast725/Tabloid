@@ -3,6 +3,7 @@
 #include "parser.h"
 #include <iostream>
 #include <sndfile.h>
+#include <sys/stat.h>
 
 void Parser::Parse(const char *file_name)
 {
@@ -35,18 +36,14 @@ void Parser::AubioInit(const char *file_name)
 
     // Create objects that aubio will use.
     fft_grain_ = new_cvec(buffer_size_, channels);
-    aubio_pitchdetection_type pitch_type = aubio_pitch_yinfft;
-    aubio_pitchdetection_mode pitch_mode = aubio_pitchm_freq;
     pitch_detection_ = new_aubio_pitchdetection(buffer_size_ * 4,
                                                 overlap_size_, channels,
-                                                samplerate_, pitch_type,
-                                                pitch_mode);
+                                                samplerate_, aubio_pitch_yinfft,
+                                                aubio_pitchm_freq);
     aubio_pitchdetection_set_yinthresh(pitch_detection_, 0.7);
     pvoc_ = new_aubio_pvoc(buffer_size_, overlap_size_, channels);
-    smpl_t threshold = 0.3;
-    peak_ = new_aubio_peakpicker(threshold);
-    aubio_onsetdetection_type onset_type = aubio_onset_kl;
-    onset_detection_ = new_aubio_onsetdetection(onset_type, buffer_size_,
+    peak_ = new_aubio_peakpicker(0.3);
+    onset_detection_ = new_aubio_onsetdetection(aubio_onset_kl, buffer_size_,
                                                 channels);
     onset_ = new_fvec(1, channels);
 }

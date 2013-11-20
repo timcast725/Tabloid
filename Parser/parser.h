@@ -18,10 +18,6 @@ private:
     fvec_t *input_buffer_;
     fvec_t *onset_;
 
-    //fvec_t *note_buffer_;
-    //fvec_t *note_buffer2_;
-    //uint_t median_;
-
     // Audio information.
     uint_t samplerate_;
     uint_t buffer_size_;
@@ -35,7 +31,7 @@ private:
     bool is_onset_;
 
 public:
-    Parser() {  }
+    Parser() {}
     void Parse(const char *file_name);
 
 private:

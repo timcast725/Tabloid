@@ -2,64 +2,50 @@
 
 #include "parser.h"
 #include <iostream>
+#include <sndfile.h>
+#include <sys/stat.h>
 
-Parser::Parser()
+void Parser::Parse(const char *file_name)
 {
-    // These are just defaults aubio uses.
-    pitch_type_ = aubio_pitch_yinfft;
-    pitch_mode_ = aubio_pitchm_freq;
-    onset_type_ = aubio_onset_kl;
+    AubioInit(file_name);
+    AubioProcess();
+    AubioDelete();
 }
 
-Parser::~Parser()
-{
-    SendNoteOn(cur_note_, 0);
-    del_aubio_pitchdetection(pitch_detection_);
-    del_aubio_onsetdetection(onset_detection_);
-    del_aubio_peakpicker(peak_);
-    del_aubio_pvoc(pvoc_);
-    del_fvec(input_buffer_);
-    del_fvec(onset_);
-    del_cvec(fft_grain_);
-    aubio_cleanup();
-}
-
-void Parser::AubioInit(std::string filename)
+void Parser::AubioInit(const char *file_name)
 {
     // Defaults that aubio uses.
     buffer_size_ = 1024;
     overlap_size_ = 256;
     pitch_ = 0;
-    threshold_ = 0.3;
     cur_note_ = 0;
     cur_level_ = 0;
     frames_ = 0;
     is_onset_ = false;
 
     // Open the audio file with the SND library.
-    aubio_file_ = new_aubio_sndfile_ro(filename.c_str());
+    aubio_file_ = new_aubio_sndfile_ro(file_name);
     if (!aubio_file_)
         std::cerr << "Could not open file\n";
     aubio_sndfile_info(aubio_file_);
 
     // Load audio file information into the Parser class.
-    channels_ = aubio_sndfile_channels(aubio_file_);
+    uint_t channels = aubio_sndfile_channels(aubio_file_);
     samplerate_ = aubio_sndfile_samplerate(aubio_file_);
-    input_buffer_ = new_fvec(overlap_size_, channels_);
-    // output_buffer_  = new_fvec(overlap_size_, channels_);
+    input_buffer_ = new_fvec(overlap_size_, channels);
 
     // Create objects that aubio will use.
-    fft_grain_ = new_cvec(buffer_size_, channels_);
+    fft_grain_ = new_cvec(buffer_size_, channels);
     pitch_detection_ = new_aubio_pitchdetection(buffer_size_ * 4,
-                                                overlap_size_, channels_,
-                                                samplerate_, pitch_type_,
-                                                pitch_mode_);
+                                                overlap_size_, channels,
+                                                samplerate_, aubio_pitch_yinfft,
+                                                aubio_pitchm_freq);
     aubio_pitchdetection_set_yinthresh(pitch_detection_, 0.7);
-    pvoc_ = new_aubio_pvoc(buffer_size_, overlap_size_, channels_);
-    peak_ = new_aubio_peakpicker(threshold_);
-    onset_detection_ = new_aubio_onsetdetection(onset_type_, buffer_size_,
-                                                channels_);
-    onset_ = new_fvec(1, channels_);
+    pvoc_ = new_aubio_pvoc(buffer_size_, overlap_size_, channels);
+    peak_ = new_aubio_peakpicker(0.3);
+    onset_detection_ = new_aubio_onsetdetection(aubio_onset_kl, buffer_size_,
+                                                channels);
+    onset_ = new_fvec(1, channels);
 }
 
 void Parser::AubioProcess()
@@ -73,7 +59,6 @@ void Parser::AubioProcess()
         is_onset_ = 0;
         // AubioNotes should be swappable with other functions in the future.
         AubioNotes(overlap_size_);
-        // std::cout << ":H:" << pitch_ << std::endl;
         frames_++;
         frames_read = aubio_sndfile_read(aubio_file_, overlap_size_,
                                           input_buffer_);
@@ -81,9 +66,20 @@ void Parser::AubioProcess()
 
     std::cout << "Processed " << frames_ << " frames of " << buffer_size_ <<
                  " samples." << std::endl;
+}
 
+void Parser::AubioDelete()
+{
     del_aubio_sndfile(aubio_file_);
-    // AubioInit must be called each time.
+    SendNoteOn(cur_note_, 0);
+    del_aubio_pitchdetection(pitch_detection_);
+    del_aubio_onsetdetection(onset_detection_);
+    del_aubio_peakpicker(peak_);
+    del_aubio_pvoc(pvoc_);
+    del_fvec(input_buffer_);
+    del_fvec(onset_);
+    del_cvec(fft_grain_);
+    aubio_cleanup();
 }
 
 int Parser::AubioNotes(int nframes)
@@ -111,14 +107,9 @@ int Parser::AubioNotes(int nframes)
                 }
                 else
                 {
-                    // Kill old note.
-                    SendNoteOn(cur_note_, 0);
                     // Get and send new note.
                     SendNoteOn(pitch_, 127 + (int) cur_level_);
                     cur_note_ = pitch_;
-
-                    // Writing to output from audio example. Safe to not have?
-                    // for (pos = 0; pos < overlap_size_; pos++)
                 }
             }
             pos = -1;

@@ -542,7 +542,7 @@ void Engine::calculateLevel(qint64 position, qint64 length)
 void Engine::parse() {
 
     std::string filename = m_filename.toStdString();
-    m_parser.AubioInit(filename);
+    m_parser.Parse(filename.c_str());
     midi_convert(m_sheetmusic);
 }
 
