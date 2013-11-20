@@ -549,46 +549,9 @@ void Engine::parse() {
 
 void Engine::midi_convert(SheetMusic music){
 
-    int melody[50]  = {72,72,79,79,81,81,79,77,77,76,76,74,74,72,-1};
-    int mrhythm[50] = { 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2,-1};
-
-    vector<Note> test_notes;
-    //Note temp_note;
-    //write the notes, put them in measures, and put the measures
-    //in a sheet music file
-    int duration = 500; //each note will be half a second long
-    int velocity = 68; //each note will have a velocity of 68
-    int start_time = 0; //start time will increment such that
-
-    //cout << "Duration: " + to_string(duration) + " velocity: " + to_string(velocity) + " start_time " + to_string(start_time) + "\n";
-
-    //the midi will play one note at a time
-    //All notes store timing information as millisecond values
-    int i = 0;
-    while(melody[i] >= 0)
-    {
-        //temp_note = new Note(melody[i], 68, duration, start_time);
-        test_notes.push_back(*(new Note(melody[i], 68, duration*mrhythm[i], start_time)));
-        start_time += duration*mrhythm[i];
-        i++;
-    }
-
-    vector<Note> test_notes_one_ms;
-    test_notes_one_ms.push_back(*(new Note(50, 68, 1000, 0)));
-
-    Measure test_measure;
-    test_measure.AddNotes(test_notes);
-    SheetMusic test_sheet;
-    test_sheet.AddMeasure(test_measure);
-
-    vector<Measure>::iterator sheet_iter = test_sheet.GetAllMeasures().begin();
-
-    MidiConverter test_converter = MidiConverter("TestOutput");
-    cout << "\ntest_converter's output_file_name_: " << test_converter.output_file_name();
-    test_converter.Convert(test_sheet);
-    MidiConverter test_converter2 = MidiConverter();
-    cout << "\ntest_converter2's output_file_name_: " << test_converter2.output_file_name();
-    test_converter2.Convert(test_sheet);
+    MidiConverter converter = MidiConverter();
+    cout << "\nconverter's output_file_name_: " << converter.output_file_name();
+    converter.Convert(music);
 
 }
 

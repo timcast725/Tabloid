@@ -19,8 +19,6 @@ HEADERS = \
     sheet_music.h \
     measure.h \
     parser.h \
-    converter.h \
-    midi_converter.h \
     ../third-party/midifile/include/MidiFile.h \
     ../third-party/midifile/include/Array.h \
     ../third-party/midifile/include/sigConfiguration.h \
@@ -28,7 +26,9 @@ HEADERS = \
     ../third-party/midifile/include/Options.h \
     ../third-party/midifile/include/Options_private.h \
     ../third-party/midifile/include/FileIO.h \
-    ../third-party/midifile/src/MidiFile.cpp.autosave
+    ../third-party/midifile/src/MidiFile.cpp.autosave \
+    ../Converter/Converter/converter.h \
+    ../Converter/Converter/midi_converter.h
 
 SOURCES = \
     main.cpp \
@@ -43,12 +43,13 @@ SOURCES = \
     sheet_music.cpp \
     measure.cpp \
     parser.cpp \
-    midi_converter.cpp \
     ../third-party/midifile/include/SigCollection.cpp \
     ../third-party/midifile/src/Options.cpp \
     ../third-party/midifile/src/Options_private.cpp \
     ../third-party/midifile/src/MidiFile.cpp \
-    ../third-party/midifile/src/FileIO.cpp
+    ../third-party/midifile/src/FileIO.cpp \
+    ../Converter/Converter/converter.cpp \
+    ../Converter/Converter/midi_converter.cpp
 
 maemo*: {
     FORMS += audiorecorder_small.ui
