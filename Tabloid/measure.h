@@ -29,6 +29,9 @@ public:
     //and returns the note removed.
     Note RemoveHeadNote();
 
+    //Remove all notes from measure
+    void clear();
+
     //Accessor method for vector of notes in this measure
     vector<Note> GetAllNotes();
 

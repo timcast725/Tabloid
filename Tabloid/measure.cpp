@@ -44,6 +44,11 @@ Note Measure::RemoveHeadNote()
     return head_note;
 }
 
+void Measure::clear()
+{
+    notes.clear();
+}
+
 vector<Note> Measure::GetAllNotes()
 {
     return notes;

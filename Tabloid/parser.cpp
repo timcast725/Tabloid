@@ -12,6 +12,7 @@ Parser::Parser()
 
 void Parser::Parse(const char *file_name, SheetMusic &sheet)
 {
+    measure_.clear();
     AubioInit(file_name);
     AubioProcess();
     AubioDelete();
