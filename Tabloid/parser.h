@@ -6,11 +6,13 @@
 #include "sheet_music.h"
 #include <aubio.h>
 #include <sndfileio.h>
+#include <vector>
 
 class Parser
 {
 private:
     Measure measure_;
+    std::vector<smpl_t> pitches_;
     aubio_sndfile_t *aubio_file_;
     aubio_pitchdetection_t *pitch_detection_;
     aubio_onsetdetection_t *onset_detection_;
@@ -25,14 +27,9 @@ private:
     uint_t buffer_size_;
     uint_t overlap_size_;
     smpl_t pitch_;
-    smpl_t curr_note_;
-    smpl_t curr_level_;
     unsigned int pos_;
     int frames_;
-    int last_pitch_;
-    int last_velocity_;
     int beats_;
-    float last_time_;
     bool is_onset_;
     bool is_tactus_;
 
@@ -47,10 +44,6 @@ private:
     void AubioProcess();
     // Deallocate stuff, should be called when done with a file.
     void AubioDelete();
-    // Sends the note to sheet music.
-    // @param pitch The pitch to print in frequency.
-    // @param velocity The velocity of the note, 0 if silence.
-    void SendNoteOn(int pitch, int velocity);
 };
 
 
