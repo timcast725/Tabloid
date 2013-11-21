@@ -2,6 +2,7 @@
 
 #include "parser.h"
 #include <iostream>
+#include <algorithm>
 #include <sndfile.h>
 #include <sys/stat.h>
 
@@ -90,6 +91,7 @@ void Parser::AubioProcess()
                     time = (float) frames_ * overlap_size_ / (float) samplerate_;
                     if (!first)
                     {
+                        sort(pitches_.begin(), pitches_.end());
                         pitch = pitches_[pitches_.size() / 2];
                         if (pitch != 0)
                         {
