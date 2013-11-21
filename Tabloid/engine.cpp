@@ -551,9 +551,13 @@ void Engine::parse() {
 void Engine::midi_convert(SheetMusic music){
 
     MidiConverter converter = MidiConverter();
-    cout << "\nconverter's output_file_name_: " << converter.output_file_name();
     converter.Convert(music);
-
+    string musescore = "musescore $(pwd)/";
+    string file_name = converter.output_file_name();
+    musescore.append(file_name);
+    musescore.append(" &");
+    cout << "\nconverter's output_file_name_: " << file_name << endl;
+    system(musescore.c_str());
 }
 
 void Engine::setFormat(const QAudioFormat &format)
