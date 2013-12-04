@@ -93,7 +93,7 @@ void Parser::AubioProcess()
                     {
                         sort(pitches_.begin(), pitches_.end());
                         pitch = pitches_[pitches_.size() / 2];
-                        if (pitch != 0)
+                        if (pitch > 40)
                         {
                             midi_pitch = (int) (aubio_freqtomidi(pitch) + 0.5);
                             std::cout << "pitch: " << midi_pitch <<

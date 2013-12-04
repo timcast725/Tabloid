@@ -56,7 +56,7 @@ Engine::Engine(QObject *parent)
 {
     initialize();
 
-
+    // Initializes our output dir
     createOutputDir();
 
 
@@ -67,6 +67,7 @@ Engine::~Engine()
 
 }
 
+// Loads a wav file into the program
 bool Engine::loadFile(const QString &fileName)
 {
     reset();
@@ -100,13 +101,15 @@ bool Engine::initializeRecord()
     return initialize();
 }
 
+// Allows our buffer to be as long as a loaded file
 qint64 Engine::bufferLength() const
 {
     return m_file ? m_file->size() : m_bufferLength;
 }
 
 
-//Public Slots
+//Public Slots (slots are what functions interact directly with the GUI,
+//              its a QT construct)
 
 void Engine::startRecording()
 {
@@ -176,6 +179,7 @@ void Engine::startParse() {
 
 }
 
+// If pause is pressed, change the active state
 void Engine::suspend()
 {
     if (QAudio::ActiveState == m_state ||
@@ -347,13 +351,16 @@ bool Engine::initialize()
     if (selectFormat()) {
         if (m_format != format) {
             resetAudioDevices();
+            //if we've loaded a file
             if (m_file) {
                 emit bufferLengthChanged(bufferLength());
                 emit dataLengthChanged(dataLength());
                 emit bufferChanged(0, 0, m_buffer);
                 setRecordPosition(bufferLength());
                 result = true;
-            } else {
+            }
+            //if we're recording
+            else {
                 m_bufferLength = audioLength(m_format, BufferDurationUs);
                 m_buffer.resize(m_bufferLength);
                 m_buffer.fill(0);

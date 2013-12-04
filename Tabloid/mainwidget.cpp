@@ -180,7 +180,7 @@ void MainWidget::createUi()
 
     m_modeButton->setText(tr("Mode"));
 
-    m_recordIcon = QIcon(":/images/record.png");
+    m_recordIcon = QIcon("../images/record.png");
     m_recordButton->setIcon(m_recordIcon);
     m_recordButton->setEnabled(false);
     m_recordButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -198,12 +198,14 @@ void MainWidget::createUi()
     m_playButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_playButton->setMinimumSize(buttonSize);
 
-    m_settingsIcon = QIcon(":/images/settings.png");
+    m_settingsIcon = QIcon("../images/settings.png");
     m_settingsButton->setIcon(m_settingsIcon);
     m_settingsButton->setEnabled(true);
     m_settingsButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_settingsButton->setMinimumSize(buttonSize);
 
+    m_parseIcon = QIcon("../images/midi.png");
+    m_parseButton->setIcon(m_parseIcon);
     m_parseButton->setEnabled(true);
     m_parseButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_parseButton->setMinimumSize(buttonSize);

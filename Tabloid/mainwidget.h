@@ -5,16 +5,7 @@
 #include <QIcon>
 #include <QWidget>
 
-/*Put all classes in here
- *
- *class Engine
- *class Parser
- *class Converter
- *class SheetMusic
- *class ...
- *
- */
-
+//all of the classes we need for the gui
 class Engine;
 class LevelMeter;
 class ProgressBar;
@@ -81,6 +72,7 @@ private:
     QPushButton*            m_pauseButton;
     QIcon                   m_pauseIcon;
     QPushButton*            m_playButton;
+    QIcon                   m_parseIcon;
     QPushButton*            m_parseButton;
     QIcon                   m_playIcon;
     QPushButton*            m_settingsButton;
