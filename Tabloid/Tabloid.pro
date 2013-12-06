@@ -27,7 +27,6 @@ HEADERS = \
     ../third-party/midifile/include/Options.h \
     ../third-party/midifile/include/Options_private.h \
     ../third-party/midifile/include/FileIO.h \
-    ../third-party/midifile/src/MidiFile.cpp.autosave \
     ../Converter/Converter/converter.h \
     ../Converter/Converter/midi_converter.h
 
