@@ -1,2 +1,3 @@
-Tabloid: input waves, output MUSIC
+Tabloid
 
+Input waves, output MUSIC
