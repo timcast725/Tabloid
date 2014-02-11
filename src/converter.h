@@ -21,7 +21,9 @@
 
 #include "sheet_music.h"
 
+#include <fstream>
 #include <string>
+#include <vector>
 
 class Converter
 {
@@ -30,6 +32,7 @@ public:
     bool Convert(const std::string &name, const SheetMusic &sheet);
 
 private:
+    void Close(std::vector<std::string> &tags, std::ofstream &output);
 };
 
 

@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
     Parser parse;
     parse.Parse("Bb.wav", music);
     Converter convert;
-    convert.Convert("Bb.txt", music);
+    convert.Convert("Bb.xml", music);
     // music.reset();
     // parse.Parse("sdd_test.wav", music);
     return 1;
