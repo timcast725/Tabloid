@@ -14,21 +14,32 @@
 
 // You should have received a copy of the GNU General Public License
 // along with Tabloid.  If not, see <http://www.gnu.org/licenses/>.
+//
 
 #include "converter.h"
-#include "parser.h"
-#include "sheet_music.h"
 
-#include <iostream>
+#include <fstream>
+#include <vector>
 
-int main(int argc, char *argv[])
+Converter::Converter()
 {
-    SheetMusic music;
-    Parser parse;
-    parse.Parse("Bb.wav", music);
-    Converter convert;
-    convert.Convert("Bb.txt", music);
-    // music.reset();
-    // parse.Parse("sdd_test.wav", music);
-    return 1;
+}
+
+bool Converter::Convert(const std::string &name, const SheetMusic &sheet)
+{
+    std::vector<std::string> tags;
+    std::ofstream output;
+    output.open(name, ios::out | ios::trunc);
+
+    // MusicXML header
+    output << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>";
+    output << std::endl;
+    output << "<!DOCTYPE score-partwise PUBLIC" << std::endl;
+    output << "\"-//Recordare//DTD MusicXML 3.0 Partwise//EN\"" << std::endl;
+    output << "\"http://www.musicxml.org/dtds/partwise.dtd\">\"" << std::endl;
+
+
+    output.close();
+
+    return true;
 }

@@ -14,21 +14,24 @@
 
 // You should have received a copy of the GNU General Public License
 // along with Tabloid.  If not, see <http://www.gnu.org/licenses/>.
+//
 
-#include "converter.h"
-#include "parser.h"
+#ifndef CONVERTER_H
+#define CONVERTER_H
+
 #include "sheet_music.h"
 
-#include <iostream>
+#include <string>
 
-int main(int argc, char *argv[])
+class Converter
 {
-    SheetMusic music;
-    Parser parse;
-    parse.Parse("Bb.wav", music);
-    Converter convert;
-    convert.Convert("Bb.txt", music);
-    // music.reset();
-    // parse.Parse("sdd_test.wav", music);
-    return 1;
-}
+public:
+    Converter();
+    bool Convert(const std::string &name, const SheetMusic &sheet);
+
+private:
+};
+
+
+#endif
+// CONVERTER_H
