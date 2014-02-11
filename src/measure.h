@@ -50,7 +50,7 @@ public:
     void clear();
 
     //Accessor method for vector of notes in this measure
-    vector<Note> GetAllNotes();
+    vector<Note> GetAllNotes() const;
 
 private:
     //Holds all the notes in this measure

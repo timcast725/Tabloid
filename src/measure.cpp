@@ -66,7 +66,7 @@ void Measure::clear()
     notes.clear();
 }
 
-vector<Note> Measure::GetAllNotes()
+vector<Note> Measure::GetAllNotes() const
 {
     return notes;
 }

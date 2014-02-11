@@ -42,7 +42,7 @@ public:
     Measure RemoveHeadMeasure();
 
     //Accessor for measure vector
-    vector<Measure> GetAllMeasures();
+    vector<Measure> GetAllMeasures() const;
 
     void reset();
 

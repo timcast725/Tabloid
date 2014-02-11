@@ -63,7 +63,7 @@ Measure SheetMusic::RemoveHeadMeasure()
     return head_measure;
 }
 
-vector<Measure> SheetMusic::GetAllMeasures()
+vector<Measure> SheetMusic::GetAllMeasures() const
 {
     return measures;
 }
