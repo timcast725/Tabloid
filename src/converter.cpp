@@ -22,65 +22,73 @@
 
 Converter::Converter()
 {
+    measure_ = 1;
 }
 
 bool Converter::Convert(const std::string &name, const SheetMusic &sheet)
 {
-    std::ofstream output;
-    output.open(name, ios::out | ios::trunc);
+    output_.open(name, ios::out | ios::trunc);
 
     // MusicXML header
-    output << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>";
-    output << std::endl;
-    output << "<!DOCTYPE score-partwise PUBLIC" << std::endl;
-    output << "\"-//Recordare//DTD MusicXML 3.0 Partwise//EN\"" << std::endl;
-    output << "\"http://www.musicxml.org/dtds/partwise.dtd\">" << std::endl;
+    output_ << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>";
+    output_ << std::endl;
+    output_ << "<!DOCTYPE score-partwise PUBLIC" << std::endl;
+    output_ << "\"-//Recordare//DTD MusicXML 3.0 Partwise//EN\"" << std::endl;
+    output_ << "\"http://www.musicxml.org/dtds/partwise.dtd\">" << std::endl;
 
     // Sheet music format
-    Open("score-partwise", output, "version=\"3.0\"");
-    Open("part-list", output);
-    Open("score-part", output, "id=\"P1\"");
-    Open("part-name", output);
-    Print(name, output);
-    Close(output);
-    Close(output);
-    Close(output);
+    Open("score-partwise", "version=\"3.0\"");
+    Open("part-list");
+    Open("score-part", "id=\"P1\"");
+    Open("part-name");
+    Print("Part 1");
+    Close();
+    Close();
+    Close();
 
+    // Starting Part 1
+    Open("part", "id=\"P1\"");
+    Open("measure", "number=\"1\"");
     std::vector<Note> notes = sheet.GetAllMeasures()[0].GetAllNotes();
     for (int i = 0; i < notes.size(); i++)
     {
 
     }
 
-    while (_tags.size() > 0)
-        Close(output);
-    output.close();
+    while (tags_.size() > 0)
+        Close();
+    output_.close();
 
     return true;
 }
 
-void Converter::Open(std::string tag, std::ofstream &output, std::string option)
+void Converter::Open(std::string tag, std::string option)
 {
-    for (int i = 0; i < _tags.size(); i++)
-        output << "\t";
+    for (int i = 0; i < tags_.size(); i++)
+        output_ << "\t";
     if (option == "")
-        output << "<" << tag << ">" << std::endl;
+        output_ << "<" << tag << ">" << std::endl;
     else
-        output << "<" << tag << " " << option << ">" << std::endl;
-    _tags.push_back(tag);
+        output_ << "<" << tag << " " << option << ">" << std::endl;
+    tags_.push_back(tag);
 }
 
-void Converter::Print(std::string content, std::ofstream &output)
+void Converter::Print(std::string content)
 {
-    for (int i = 0; i < _tags.size(); i++)
-        output << "\t";
-    output << content << std::endl;
+    for (int i = 0; i < tags_.size(); i++)
+        output_ << "\t";
+    output_ << content << std::endl;
 }
 
-void Converter::Close(std::ofstream &output)
+void Converter::Close()
 {
-    for (int i = 1; i < _tags.size(); i++)
-        output << "\t";
-    output << "</" << _tags.back() << ">" << std::endl;
-    _tags.pop_back();
+    for (int i = 1; i < tags_.size(); i++)
+        output_ << "\t";
+    output_ << "</" << tags_.back() << ">" << std::endl;
+    tags_.pop_back();
 }
+
+// void ConverterAddMeasure(int divisions, int key, int beats, int beat_type, bool treble)
+// {
+
+// }

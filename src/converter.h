@@ -32,10 +32,13 @@ public:
     bool Convert(const std::string &name, const SheetMusic &sheet);
 
 private:
-    std::vector<std::string> _tags;
-    void Open(std::string tag, std::ofstream &output, std::string option="");
-    void Print(std::string content, std::ofstream &output);
-    void Close(std::ofstream &output);
+    int measure_;
+    std::ofstream output_;
+    std::vector<std::string> tags_;
+    void Open(std::string tag, std::string option="");
+    void Print(std::string content);
+    void Close();
+    // void AddMeasure(int divisions, int key, int beats, int beat_type, bool treble);
 };
 
 
