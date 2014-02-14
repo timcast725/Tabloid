@@ -16,6 +16,7 @@
 // along with Tabloid.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "parser.h"
+#include "measure.h"
 #include <iostream>
 #include <algorithm>
 #include <sndfile.h>
@@ -26,13 +27,11 @@ Parser::Parser()
     beats_ = 0;
 }
 
-void Parser::Parse(const char *file_name, SheetMusic &sheet)
+void Parser::Parse(const char *file_name, int beats_per_measure, SheetMusic &sheet)
 {
-    measure_.clear();
     AubioInit(file_name);
-    AubioProcess();
+    AubioProcess(beats_per_measure, sheet);
     AubioDelete();
-    sheet.AddMeasure(measure_);
 }
 
 void Parser::AubioInit(const char *file_name)
@@ -73,9 +72,11 @@ void Parser::AubioInit(const char *file_name)
     tempo_ = new_fvec(2, channels);
 }
 
-void Parser::AubioProcess()
+void Parser::AubioProcess(int beats_per_measure, SheetMusic &sheet)
 {
     std::cout << "Processing...\n";
+    Measure measure;
+    int current_beat = 1;
     frames_ = 0;
     float time = 0;
     float last_time = 0;
@@ -124,7 +125,7 @@ void Parser::AubioProcess()
                         int duration = (int) (1000 * (time - last_time) );
                         int start = (int) (1000 * last_time);
                         Note note(midi_pitch, velocity, duration, start);
-                        measure_.AddNote(note);
+                        measure.AddNote(note);
                         pitches_.clear();
                     }
                     last_time = time;
@@ -137,7 +138,15 @@ void Parser::AubioProcess()
                 aubio_tempo(beat_, input_buffer_, tempo_);
                 // [0][0] is beat, [0][1] is onset
                 if (tempo_->data[0][0] == 1)
+                {
                     beats_++;
+                    current_beat++;
+                    if (current_beat > beats_per_measure)
+                    {
+                        sheet.AddMeasure(measure);
+                        measure.clear();
+                    }
+                }
                 pos_ = -1;
             }
             pos_++;

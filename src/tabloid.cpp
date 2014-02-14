@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 {
     SheetMusic music;
     Parser parse;
-    parse.Parse("Bb.wav", music);
+    parse.Parse("Bb.wav", 4, music);
     Converter convert;
     convert.Convert("Bb.xml", music);
     // music.reset();

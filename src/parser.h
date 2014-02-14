@@ -26,7 +26,6 @@
 class Parser
 {
 private:
-    Measure measure_;
     std::vector<smpl_t> pitches_;
     aubio_sndfile_t *aubio_file_;
     aubio_pitchdetection_t *pitch_detection_;
@@ -50,13 +49,13 @@ private:
 
 public:
     Parser();
-    void Parse(const char *file_name, SheetMusic &sheet);
+    void Parse(const char *file_name, int beats_per_measure, SheetMusic &sheet);
 
 private:
     // Initializes member variables according to the input file.
     void AubioInit(const char *file_name);
     // Process the entire file. Should be called after AubioInit.
-    void AubioProcess();
+    void AubioProcess(int beats_per_measure, SheetMusic &sheet);
     // Deallocate stuff, should be called when done with a file.
     void AubioDelete();
 };
