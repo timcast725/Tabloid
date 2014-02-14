@@ -32,7 +32,10 @@ public:
     bool Convert(const std::string &name, const SheetMusic &sheet);
 
 private:
-    void Close(std::vector<std::string> &tags, std::ofstream &output);
+    std::vector<std::string> _tags;
+    void Open(std::string tag, std::ofstream &output, std::string option="");
+    void Print(std::string content, std::ofstream &output);
+    void Close(std::ofstream &output);
 };
 
 

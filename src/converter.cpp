@@ -26,7 +26,6 @@ Converter::Converter()
 
 bool Converter::Convert(const std::string &name, const SheetMusic &sheet)
 {
-    std::vector<std::string> tags;
     std::ofstream output;
     output.open(name, ios::out | ios::trunc);
 
@@ -38,12 +37,14 @@ bool Converter::Convert(const std::string &name, const SheetMusic &sheet)
     output << "\"http://www.musicxml.org/dtds/partwise.dtd\">" << std::endl;
 
     // Sheet music format
-    tags.push_back("score-partwise");
-    output << "<" << tags.back() << " version=\"3.0\">" << std::endl;
-    output << "\t<part-list>" << std::endl;
-    output << "\t\t<score-part id=\"P1\">" << std::endl;
-    output << "\t\t\t<part-name>" << name << "</part-name>\n\t\t</score-part>";
-    output << "\n\t</part-list>" << std::endl;
+    Open("score-partwise", output, "version=\"3.0\"");
+    Open("part-list", output);
+    Open("score-part", output, "id=\"P1\"");
+    Open("part-name", output);
+    Print(name, output);
+    Close(output);
+    Close(output);
+    Close(output);
 
     std::vector<Note> notes = sheet.GetAllMeasures()[0].GetAllNotes();
     for (int i = 0; i < notes.size(); i++)
@@ -51,20 +52,35 @@ bool Converter::Convert(const std::string &name, const SheetMusic &sheet)
 
     }
 
-    while (tags.size() > 0)
-    {
-        Close(tags, output);
-    }
-
+    while (_tags.size() > 0)
+        Close(output);
     output.close();
 
     return true;
 }
 
-void Converter::Close(std::vector<std::string> &tags, std::ofstream &output)
+void Converter::Open(std::string tag, std::ofstream &output, std::string option)
 {
-    for (int i = 1; i < tags.size(); i++)
+    for (int i = 0; i < _tags.size(); i++)
         output << "\t";
-    output << "</" << tags.back() << ">" << std::endl;
-    tags.pop_back();
+    if (option == "")
+        output << "<" << tag << ">" << std::endl;
+    else
+        output << "<" << tag << " " << option << ">" << std::endl;
+    _tags.push_back(tag);
+}
+
+void Converter::Print(std::string content, std::ofstream &output)
+{
+    for (int i = 0; i < _tags.size(); i++)
+        output << "\t";
+    output << content << std::endl;
+}
+
+void Converter::Close(std::ofstream &output)
+{
+    for (int i = 1; i < _tags.size(); i++)
+        output << "\t";
+    output << "</" << _tags.back() << ">" << std::endl;
+    _tags.pop_back();
 }
