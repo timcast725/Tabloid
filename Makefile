@@ -19,7 +19,7 @@ obj/%.o: src/%.cpp
 	$(CC) $(CFLAGS) $< -o $@
 
 clean:
-	rm obj/*.o obj/*.d $(EXECUTABLE)
+	rm obj/*.o obj/*.d $(EXECUTABLE) ./*.xml
 
 # Recompile when a dependent header is updated.
 CFLAGS += -MMD
