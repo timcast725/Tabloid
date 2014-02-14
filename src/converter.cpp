@@ -18,11 +18,12 @@
 
 #include "converter.h"
 #include "note.h"
+#include <sstream>
 
 
 Converter::Converter()
 {
-    measure_ = 1;
+    measure_number_ = 1;
 }
 
 bool Converter::Convert(const std::string &name, const SheetMusic &sheet)
@@ -41,14 +42,13 @@ bool Converter::Convert(const std::string &name, const SheetMusic &sheet)
     Open("part-list");
     Open("score-part", "id=\"P1\"");
     Open("part-name");
-    Print("Part 1");
+    Print("");
     Close();
     Close();
     Close();
-
-    // Starting Part 1
     Open("part", "id=\"P1\"");
-    Open("measure", "number=\"1\"");
+
+    AddMeasure();
     std::vector<Note> notes = sheet.GetAllMeasures()[0].GetAllNotes();
     for (int i = 0; i < notes.size(); i++)
     {
@@ -88,7 +88,45 @@ void Converter::Close()
     tags_.pop_back();
 }
 
-// void ConverterAddMeasure(int divisions, int key, int beats, int beat_type, bool treble)
-// {
-
-// }
+void Converter::AddMeasure(int divisions, int key, int beats, int beat_type, bool treble)
+{
+    std::ostringstream n;
+    n << "number=\"" << measure_number_ << "\"";
+    Open("measure", n.str());
+    Open("attributes");
+    Open("divisions");
+    std::ostringstream d;
+    d << divisions;
+    Print(d.str());
+    Close();
+    Open("key");
+    Open("fifths");
+    std::ostringstream k;
+    k << key;
+    Print(k.str());
+    Close();
+    Close();
+    Open("time");
+    Open("beats");
+    std::ostringstream b;
+    b << beats;
+    Print(b.str());
+    Close();
+    Open("beat-type");
+    std::ostringstream t;
+    t << beat_type;
+    Print(t.str());
+    Close();
+    Open("clef");
+    if (treble)
+    {
+        Open("sign");
+        Print("G");
+        Close();
+        Open("line");
+        Print("2");
+        Close();
+    }
+    Close();
+    Close();
+}
