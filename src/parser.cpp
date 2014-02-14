@@ -80,6 +80,8 @@ void Parser::AubioProcess(int beats_per_measure, SheetMusic &sheet)
     frames_ = 0;
     float time = 0;
     float last_time = 0;
+    float measure_start_time = 0;
+    float measure_end_time = 0;
     smpl_t midi_pitch = 0;
     smpl_t pitch = 0;
     int velocity = 0;
@@ -143,8 +145,12 @@ void Parser::AubioProcess(int beats_per_measure, SheetMusic &sheet)
                     current_beat++;
                     if (current_beat > beats_per_measure)
                     {
+                        measure_end_time = measure_start_time;
+                        measure_start_time = (float) frames_ * overlap_size_ / (float) samplerate_;
+                        measure.SetBeat((measure_start_time - measure_end_time) / (float) beats_per_measure);
                         sheet.AddMeasure(measure);
                         measure.clear();
+
                     }
                 }
                 pos_ = -1;
