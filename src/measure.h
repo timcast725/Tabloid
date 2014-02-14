@@ -52,12 +52,15 @@ public:
     //Accessor method for vector of notes in this measure
     vector<Note> GetAllNotes() const;
 
+    float GetBeat() { return beat; }
+    void SetBeat(float b) { beat = b; }
+
 private:
     //Holds all the notes in this measure
     vector<Note> notes;
 
-    //Tempo is a millisecond value that is how many milliseconds are there per beat
-    int tempo;
+    // Beat duration is the number of seconds a beat takes
+    float beat;
 };
 
 #endif // MEASURE_H
