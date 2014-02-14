@@ -150,7 +150,6 @@ void Parser::AubioProcess(int beats_per_measure, SheetMusic &sheet)
                         measure.SetBeat((measure_start_time - measure_end_time) / (float) beats_per_measure);
                         sheet.AddMeasure(measure);
                         measure.clear();
-
                     }
                 }
                 pos_ = -1;
@@ -164,6 +163,9 @@ void Parser::AubioProcess(int beats_per_measure, SheetMusic &sheet)
 
     float average_duration = ((float) frames_ * overlap_size_ / (float) samplerate_);
     average_duration /= (float) (beats_ - 1);
+    measure.SetBeat(average_duration);
+    sheet.AddMeasure(measure);
+    measure.clear();
     int tempo = (int) (1.0 / average_duration * 60.0 + 0.5);
     if (tempo > 0)
         std::cout << "Tempo: " << tempo << std::endl;
