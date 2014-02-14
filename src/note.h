@@ -30,21 +30,21 @@ class Note
 
 public:
     //Constructor
-    Note(int p, int v, int d, int s);
+    Note(int p, int v, float d, float s);
     Note();
 
     int GetPitch();
     int GetVelocity();
-    int GetDuration();
-    int GetStart();
+    float GetDuration();
+    float GetStart();
 
 private:
     int pitch;
     int velocity;
-    //Duration is a millisecond value
-    int duration;
-    //start is a millisecond value
-    int start;
+    // duration in seconds
+    float duration;
+    // start time in seconds
+    float start;
 
 };
 

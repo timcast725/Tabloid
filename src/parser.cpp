@@ -124,8 +124,8 @@ void Parser::AubioProcess(int beats_per_measure, SheetMusic &sheet)
                             midi_pitch = 0;
                             velocity = 0;
                         }
-                        int duration = (int) (1000 * (time - last_time) );
-                        int start = (int) (1000 * last_time);
+                        float duration = time - last_time;
+                        float start = last_time;
                         Note note(midi_pitch, velocity, duration, start);
                         measure.AddNote(note);
                         pitches_.clear();

@@ -18,7 +18,7 @@
 #include "note.h"
 
 //Constructor
-Note::Note(int p, int v, int d, int s)
+Note::Note(int p, int v, float d, float s)
 {
     pitch = p;
     velocity = v;
@@ -41,12 +41,12 @@ int Note::GetVelocity()
     return velocity;
 }
 
-int Note::GetDuration()
+float Note::GetDuration()
 {
     return duration;
 }
 
-int Note::GetStart()
+float Note::GetStart()
 {
     return start;
 }
