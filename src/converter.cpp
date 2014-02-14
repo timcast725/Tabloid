@@ -18,6 +18,8 @@
 
 #include "converter.h"
 #include "note.h"
+
+#include <iostream>
 #include <sstream>
 
 
@@ -41,18 +43,22 @@ bool Converter::Convert(const std::string &name, const SheetMusic &sheet)
     Open("score-partwise", "version=\"3.0\"");
     Open("part-list");
     Open("score-part", "id=\"P1\"");
-    Open("part-name");
-    Print("");
-    Close();
+    Print("part-name", "");
     Close();
     Close();
     Open("part", "id=\"P1\"");
 
-    AddMeasure();
-    std::vector<Note> notes = sheet.GetAllMeasures()[0].GetAllNotes();
-    for (int i = 0; i < notes.size(); i++)
+    std::vector<Measure> measures = sheet.GetAllMeasures();
+    for (int i = 0; i < measures.size(); i++)
     {
-
+        AddMeasure();
+        std::vector<Note> notes = measures[i].GetAllNotes();
+        for (int j = 0; j < notes.size(); j++)
+        {
+            AddNote(notes[j].GetPitch(), notes[j].GetStart(),
+                    notes[j].GetDuration(), measures[i].GetBeat());
+        }
+        Close();
     }
 
     while (tags_.size() > 0)
@@ -73,11 +79,11 @@ void Converter::Open(std::string tag, std::string option)
     tags_.push_back(tag);
 }
 
-void Converter::Print(std::string content)
+void Converter::Print(std::string tag, std::string content)
 {
     for (int i = 0; i < tags_.size(); i++)
         output_ << "\t";
-    output_ << content << std::endl;
+    output_ << "<" << tag << ">" << content << "</" << tag << ">" << std::endl;
 }
 
 void Converter::Close()
@@ -88,45 +94,103 @@ void Converter::Close()
     tags_.pop_back();
 }
 
+void Converter::AddNote(int pitch, float start, float duration, float beat_duration, int divisions)
+{
+    Open("note");
+    if (pitch == 0)
+    {
+        for (int i = 0; i < tags_.size(); i++)
+            output_ << "\t";
+        std::cout << "<rest/>" << std::endl;
+    }
+    else
+    {
+        Open("pitch");
+        switch (pitch % 12)
+        {
+            case 0:
+                Print("step", "C");
+                break;
+            case 1:
+                Print("step", "C");
+                Print("alter", "1");
+                break;
+            case 2:
+                Print("step", "D");
+                break;
+            case 3:
+                Print("step", "E");
+                Print("alter", "-1");
+                break;
+            case 4:
+                Print("step", "E");
+                break;
+            case 5:
+                Print("step", "F");
+                break;
+            case 6:
+                Print("step", "F");
+                Print("alter", "1");
+                break;
+            case 7:
+                Print("step", "G");
+                break;
+            case 8:
+                Print("step", "A");
+                Print("alter", "-1");
+                break;
+            case 9:
+                Print("step", "A");
+                break;
+            case 10:
+                Print("step", "B");
+                Print("alter", "-1");
+                break;
+            case 11:
+                Print("step", "B");
+                break;
+        }
+        std::ostringstream octave;
+        octave << pitch / 12;
+        Print("octave", octave.str());
+        Close();
+    }
+    float beats = duration / beat_duration;
+    std::ostringstream d;
+    d << (int) (beats / divisions + 0.5);
+    Print("duration", d.str());
+    Close();
+}
+
 void Converter::AddMeasure(int divisions, int key, int beats, int beat_type, bool treble)
 {
     std::ostringstream n;
     n << "number=\"" << measure_number_ << "\"";
     Open("measure", n.str());
     Open("attributes");
-    Open("divisions");
     std::ostringstream d;
     d << divisions;
-    Print(d.str());
-    Close();
+    Print("divisions", d.str());
     Open("key");
-    Open("fifths");
     std::ostringstream k;
     k << key;
-    Print(k.str());
-    Close();
+    Print("fifths", k.str());
     Close();
     Open("time");
-    Open("beats");
     std::ostringstream b;
     b << beats;
-    Print(b.str());
-    Close();
-    Open("beat-type");
+    Print("beats", b.str());
     std::ostringstream t;
     t << beat_type;
-    Print(t.str());
+    Print("beat-type", t.str());
     Close();
     Open("clef");
     if (treble)
     {
-        Open("sign");
-        Print("G");
-        Close();
-        Open("line");
-        Print("2");
-        Close();
+        Print("sign", "G");
+        Print("line", "2");
     }
     Close();
     Close();
+    measure_number_++;
 }
