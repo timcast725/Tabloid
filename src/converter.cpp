@@ -151,7 +151,7 @@ void Converter::AddNote(int pitch, float start, float duration, float beat_durat
                 break;
         }
         std::ostringstream octave;
-        octave << pitch / 12;
+        octave << (pitch / 12) - 1;
         Print("octave", octave.str());
         Close();
     }
