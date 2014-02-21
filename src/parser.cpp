@@ -150,6 +150,7 @@ void Parser::AubioProcess(int beats_per_measure, SheetMusic &sheet)
                         measure.SetBeat((measure_start_time - measure_end_time) / (float) beats_per_measure);
                         sheet.AddMeasure(measure);
                         measure.clear();
+                        current_beat = 1;
                     }
                 }
                 pos_ = -1;
