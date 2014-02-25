@@ -6,7 +6,7 @@ SOURCES = $(wildcard src/*.cpp)
 # All source objects and make file objects
 OBJECTS = $(addprefix obj/, $(notdir $(SOURCES:.cpp=.o)))
 # Flags to use when compiling
-CFLAGS = -Wall -c -std=c++0x
+CFLAGS = -Wall -c
 # Flags to use when linking
 LDFLAGS = -laubio -laubioext -W1,-rpath=/usr/local/lib
 # Executable name

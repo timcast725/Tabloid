@@ -30,7 +30,7 @@ Converter::Converter()
 
 bool Converter::Convert(const std::string &name, const SheetMusic &sheet)
 {
-    output_.open(name, ios::out | ios::trunc);
+    output_.open(name.c_str(), ios::out | ios::trunc);
 
     // MusicXML header
     output_ << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>";
