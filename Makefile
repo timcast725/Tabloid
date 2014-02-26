@@ -8,7 +8,7 @@ OBJECTS = $(addprefix obj/, $(notdir $(SOURCES:.cpp=.o)))
 # Flags to use when compiling
 CFLAGS = -Wall -c
 # Flags to use when linking
-LDFLAGS = -laubio -laubioext -W1,-rpath=/usr/local/lib
+LDFLAGS = -laubio
 # Executable name
 EXECUTABLE = Tab
 
