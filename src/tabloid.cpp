@@ -25,7 +25,11 @@ int main(int argc, char *argv[])
 {
     SheetMusic music;
     Parser parse;
-    parse.Parse("sdd_test.wav", 4, music);
+    if (!parse.Parse((char_t *) "c_scale.wav", 4, music))
+    {
+        std::cerr << "Failed to parse" << std::endl;
+        return 0;
+    }
     Converter convert;
     convert.Convert("C_scale.xml", music);
     // music.reset();
