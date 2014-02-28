@@ -15,12 +15,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Tabloid.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "parser.h"
 #include "measure.h"
+#include "parser.h"
+#include "recorder.h"
 #include <iostream>
-#include <algorithm>
-#include <sndfile.h>
-#include <sys/stat.h>
+#include <vector>
 
 Parser::Parser()
 {
@@ -35,6 +34,7 @@ Parser::Parser()
     samplerate = 0;
     hop_size = 256;
     buffer_size = 2048;
+    silence_threshold = -90;
 }
 
 bool Parser::Parse(char *file_name, int beats_per_measure, SheetMusic &sheet)
@@ -101,35 +101,58 @@ void Parser::AubioProcess(int beats_per_measure, SheetMusic &sheet)
     blocks = 0;
     read = hop_size;
     float first_beat_time = 0;
+    int current_beat = 1;
     fvec_t *onset_output = new_fvec(1);
     fvec_t *pitch_output = new_fvec(1);
+    Measure measure;
+    Recorder recorder;
+    smpl_t pitch;
     // Loop until the song is finished processing.
     while (read == hop_size)
     {
         aubio_source_do(aubio_source, input_buffer, &read);
         // Process pitch
         aubio_pitch_do(aubio_pitch, input_buffer, pitch_output);
+        pitch = fvec_get_sample(pitch_output, 0);
         // Process onset block
         aubio_onset_do(aubio_onset, input_buffer, onset_output);
         if (fvec_get_sample(onset_output, 0))
         {
             // Onset detected
-            std::cout << "Note " << fvec_get_sample(pitch_output, 0) << " at "
-                      << aubio_onset_get_last_s(aubio_onset) << " seconds with level "
-                      << 127 + aubio_level_detection(input_buffer, -90) << std::endl;
+            float time = aubio_onset_get_last_s(aubio_onset);
+            recorder.Stop(measure, time);
+            std::cout << "Note " << pitch << " at " << time << std::endl;
+            recorder.Start(time);
         }
         else
         {
+            // No start of notes
+        }
+        if (aubio_level_detection(input_buffer, -90) < 1)
+        {
 
         }
+        else
+        {
+            // Silence
+            float time = (float) blocks * hop_size / (float) samplerate;
+            recorder.Stop(measure, time);
+        }
+        recorder.Update(pitch);
         // Process tempo
         aubio_tempo_do(aubio_tempo, input_buffer, tempo_output);
         if (fvec_get_sample(tempo_output, 0))
         {
             if (first_beat_time <= 0)
                 first_beat_time = aubio_tempo_get_last_s(aubio_tempo);
-            std::cout << "Beat at " << aubio_tempo_get_last_s(aubio_tempo) - first_beat_time
-                      << " seconds\n";
+            current_beat++;
+            if (current_beat > beats_per_measure)
+            {
+                measure.SetBeat(60 / aubio_tempo_get_bpm(aubio_tempo));
+                sheet.AddMeasure(measure);
+                measure.clear();
+                current_beat = 1;
+            }
         }
         blocks++;
     }
