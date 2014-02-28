@@ -20,8 +20,9 @@
 
 #include "sheet_music.h"
 #include <aubio/aubio.h>
-// #include <sndfileio.h>
 #include <vector>
+
+const int TEMPO_LOOP = 8;
 
 class Parser
 {

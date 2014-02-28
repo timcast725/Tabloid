@@ -53,14 +53,13 @@ bool Parser::AubioInit(char *file_name)
 {
     // Open the audio file.
     std::cout << "Opening file " << file_name << std::endl;
-    aubio_source = new_aubio_source(file_name, samplerate, hop_size);
+    aubio_source = new_aubio_source(file_name, 0, hop_size);
     if (!aubio_source)
     {
         std::cerr << "Could not open file " << file_name << std::endl;
         return false;
     }
-    if (samplerate == 0)
-        samplerate = aubio_source_get_samplerate(aubio_source);
+    samplerate = aubio_source_get_samplerate(aubio_source);
     input_buffer =  new_fvec(hop_size);
 
     // Create detection objects.
@@ -79,10 +78,31 @@ void Parser::AubioProcess(int beats_per_measure, SheetMusic &sheet)
     std::cout << "Processing...\n";
     int blocks = 0;
     uint_t read = hop_size;
-    uint_t total_read = 0;
+    fvec_t *tempo_output = new_fvec(2);
+    // Loop TEMPO_LOOP times for aubio beat detection to settle down.
+    // Arbitrary amount, 4-6 seems to work, 8 to be safe.
+    int i = 0;
+    while (i < TEMPO_LOOP)
+    {
+        aubio_source_do(aubio_source, input_buffer, &read);
+        aubio_tempo_do(aubio_tempo, input_buffer, tempo_output);
+        // tempo_output[0] for beat detection, tempo_output[1] for onset
+        if (fvec_get_sample(tempo_output, 0))
+        {
+            std::cout << "Beat at " << aubio_tempo_get_last_s(aubio_tempo)
+                      << " seconds at " << aubio_tempo_get_bpm(aubio_tempo)
+                      << " bpm\n";
+            i++;
+        }
+        blocks++;
+    }
+    // Reset the audio file
+    aubio_source_seek(aubio_source, 0);
+    blocks = 0;
+    read = hop_size;
+    float first_beat_time = 0;
     fvec_t *onset_output = new_fvec(1);
     fvec_t *pitch_output = new_fvec(1);
-    fvec_t *tempo_output = new_fvec(2);
     // Loop until the song is finished processing.
     while (read == hop_size)
     {
@@ -95,8 +115,8 @@ void Parser::AubioProcess(int beats_per_measure, SheetMusic &sheet)
         {
             // Onset detected
             std::cout << "Note " << fvec_get_sample(pitch_output, 0) << " at "
-                      << aubio_onset_get_last_s(aubio_onset) << " seconds\n";
-            std::cout << "Level " << aubio_level_detection(input_buffer, -90) << std::endl;
+                      << aubio_onset_get_last_s(aubio_onset) << " seconds with level "
+                      << 127 + aubio_level_detection(input_buffer, -90) << std::endl;
         }
         else
         {
@@ -106,13 +126,14 @@ void Parser::AubioProcess(int beats_per_measure, SheetMusic &sheet)
         aubio_tempo_do(aubio_tempo, input_buffer, tempo_output);
         if (fvec_get_sample(tempo_output, 0))
         {
-            std::cout << "Beat at " << aubio_tempo_get_last_s(aubio_tempo)
-                      << " seconds at " << aubio_tempo_get_bpm(aubio_tempo)
-                      << " bpm\n";
+            if (first_beat_time <= 0)
+                first_beat_time = aubio_tempo_get_last_s(aubio_tempo);
+            std::cout << "Beat at " << aubio_tempo_get_last_s(aubio_tempo) - first_beat_time
+                      << " seconds\n";
         }
         blocks++;
-        total_read += read;
     }
+    std::cout << "Tempo: " << aubio_tempo_get_bpm(aubio_tempo) << std::endl;
     del_fvec(pitch_output);
     del_fvec(onset_output);
     del_fvec(tempo_output);
