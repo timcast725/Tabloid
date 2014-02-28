@@ -15,24 +15,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Tabloid.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "converter.h"
-#include "parser.h"
-#include "sheet_music.h"
+#ifndef RECORDER_H
+#define RECORDER_H
 
-#include <iostream>
+#include "measure.h"
 
-int main(int argc, char *argv[])
+#include <vector>
+
+class Recorder
 {
-    SheetMusic music;
-    Parser parse;
-    if (!parse.Parse((char_t *) "c_scale.wav", 4, music))
-    {
-        std::cerr << "Failed to parse" << std::endl;
-        return 0;
-    }
-    Converter convert;
-    convert.Convert("C_scale.xml", music);
-    // music.reset();
-    // parse.Parse("sdd_test.wav", music);
-    return 1;
-}
+public:
+    Recorder() { recording = false; }
+    void Start(float time);
+    void Stop(Measure &measure, float time);
+    void Update(int pitch);
+private:
+    bool recording;
+    float start_time;
+    std::vector<int> pitches;
+};
+
+#endif

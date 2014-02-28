@@ -15,177 +15,159 @@
 // You should have received a copy of the GNU General Public License
 // along with Tabloid.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "parser.h"
 #include "measure.h"
+#include "parser.h"
+#include "recorder.h"
 #include <iostream>
-#include <algorithm>
-#include <sndfile.h>
-#include <sys/stat.h>
+#include <vector>
 
 Parser::Parser()
 {
-    beats_ = 0;
+    // beats_ = 0;
+    // Values to give the user the option to change in the future:
+    // hop_size
+    // buffer_size
+    // pitch_tolerance (default 0)
+    // pitch_unit
+    // onset_threshold (default 0), tempo uses this too
+    // silence_threshold (default -90), all use the same silence
+    samplerate = 0;
+    hop_size = 256;
+    buffer_size = 2048;
+    silence_threshold = -90;
 }
 
-void Parser::Parse(const char *file_name, int beats_per_measure, SheetMusic &sheet)
+bool Parser::Parse(char *file_name, int beats_per_measure, SheetMusic &sheet)
 {
-    AubioInit(file_name);
+    if (!AubioInit(file_name))
+    {
+        std::cerr << "Failed to initialize" << std::endl;
+        return false;
+    }
     AubioProcess(beats_per_measure, sheet);
     AubioDelete();
+    return true;
 }
 
-void Parser::AubioInit(const char *file_name)
+bool Parser::AubioInit(char *file_name)
 {
-    // Defaults that aubio uses.
-    buffer_size_ = 1024;
-    overlap_size_ = 256;
-    pitch_ = 0;
-    pos_ = 0;
-    frames_ = 0;
-    is_onset_ = false;
+    // Open the audio file.
+    std::cout << "Opening file " << file_name << std::endl;
+    aubio_source = new_aubio_source(file_name, 0, hop_size);
+    if (!aubio_source)
+    {
+        std::cerr << "Could not open file " << file_name << std::endl;
+        return false;
+    }
+    samplerate = aubio_source_get_samplerate(aubio_source);
+    input_buffer =  new_fvec(hop_size);
 
-    // Open the audio file with the SND library.
-    aubio_file_ = new_aubio_sndfile_ro(file_name);
-    if (!aubio_file_)
-        std::cerr << "Could not open file\n";
-    aubio_sndfile_info(aubio_file_);
+    // Create detection objects.
+    char_t *mode = (char_t *) "default";
+    aubio_pitch = new_aubio_pitch(mode, buffer_size, hop_size, samplerate);
+    aubio_onset = new_aubio_onset(mode, buffer_size, hop_size, samplerate);
+    aubio_tempo = new_aubio_tempo(mode, buffer_size, hop_size, samplerate);
+    char_t *unit = (char_t *) "midi";
+    aubio_pitch_set_unit(aubio_pitch, unit);
 
-    // Load audio file information into the Parser class.
-    uint_t channels = aubio_sndfile_channels(aubio_file_);
-    samplerate_ = aubio_sndfile_samplerate(aubio_file_);
-    input_buffer_ = new_fvec(overlap_size_, channels);
-
-    // Create objects that aubio will use.
-    fft_grain_ = new_cvec(buffer_size_, channels);
-    pitch_detection_ = new_aubio_pitchdetection(buffer_size_ * 4,
-                                                overlap_size_, channels,
-                                                samplerate_, aubio_pitch_yinfft,
-                                                aubio_pitchm_freq);
-    aubio_pitchdetection_set_yinthresh(pitch_detection_, 0.7);
-    pvoc_ = new_aubio_pvoc(buffer_size_, overlap_size_, channels);
-    peak_ = new_aubio_peakpicker(0.3);
-    onset_detection_ = new_aubio_onsetdetection(aubio_onset_kl, buffer_size_,
-                                                channels);
-    onset_ = new_fvec(1, channels);
-    beat_ = new_aubio_tempo(aubio_onset_kl, buffer_size_,
-                                   overlap_size_, channels);
-    tempo_ = new_fvec(2, channels);
+    return true;
 }
 
 void Parser::AubioProcess(int beats_per_measure, SheetMusic &sheet)
 {
     std::cout << "Processing...\n";
-    Measure measure;
-    int current_beat = 1;
-    frames_ = 0;
-    float time = 0;
-    float last_time = 0;
-    float measure_start_time = 0;
-    float measure_end_time = 0;
-    smpl_t midi_pitch = 0;
-    smpl_t pitch = 0;
-    int velocity = 0;
-    bool first = true;
-    int frames_read = aubio_sndfile_read(aubio_file_, overlap_size_,
-                                          input_buffer_);
-    while ((signed) overlap_size_ == frames_read)
+    int blocks = 0;
+    uint_t read = hop_size;
+    fvec_t *tempo_output = new_fvec(2);
+    // Loop TEMPO_LOOP times for aubio beat detection to settle down.
+    // Arbitrary amount, 4-6 seems to work, 8 to be safe.
+    int i = 0;
+    while (i < TEMPO_LOOP)
     {
-        is_onset_ = 0;
-        // Go through frames
-        for (unsigned int frame = 0; frame < overlap_size_; frame++)
+        aubio_source_do(aubio_source, input_buffer, &read);
+        aubio_tempo_do(aubio_tempo, input_buffer, tempo_output);
+        // tempo_output[0] for beat detection, tempo_output[1] for onset
+        if (fvec_get_sample(tempo_output, 0))
         {
-            // FFT gonna happen here
-            if (pos_ == overlap_size_ - 1)
-            {
-                // Block loop
-                // Stuff for notes
-                aubio_pvoc_do(pvoc_, input_buffer_, fft_grain_);
-                aubio_onsetdetection(onset_detection_, fft_grain_, onset_);
-                is_onset_ = aubio_peakpick_pimrt(onset_, peak_);
-                pitch_ = aubio_pitchdetection(pitch_detection_, input_buffer_);
-                // If silent, curlevel is either negative or 1.
-                if (is_onset_)
-                {
-                    time = (float) frames_ * overlap_size_ / (float) samplerate_;
-                    if (!first)
-                    {
-                        sort(pitches_.begin(), pitches_.end());
-                        pitch = pitches_[pitches_.size() / 2];
-                        if (pitch > 40)
-                        {
-                            midi_pitch = (int) (aubio_freqtomidi(pitch) + 0.5);
-                            std::cout << "pitch: " << midi_pitch <<
-                                         "\t\ttime: " << last_time << std::endl;
-                            velocity = 127;
-                        }
-                        else
-                        {
-                            std::cout << "rest\t\ttime: " << last_time << std::endl;
-                            midi_pitch = 0;
-                            velocity = 0;
-                        }
-                        float duration = time - last_time;
-                        float start = last_time;
-                        Note note(midi_pitch, velocity, duration, start);
-                        measure.AddNote(note);
-                        pitches_.clear();
-                    }
-                    last_time = time;
-                    first = false;
-                }
-                if (!first)
-                    pitches_.push_back(pitch_);
-
-                // Stuff for tempo
-                aubio_tempo(beat_, input_buffer_, tempo_);
-                // [0][0] is beat, [0][1] is onset
-                if (tempo_->data[0][0] == 1)
-                {
-                    beats_++;
-                    current_beat++;
-                    if (current_beat > beats_per_measure)
-                    {
-                        measure_end_time = measure_start_time;
-                        measure_start_time = (float) frames_ * overlap_size_ / (float) samplerate_;
-                        measure.SetBeat((measure_start_time - measure_end_time) / (float) beats_per_measure);
-                        sheet.AddMeasure(measure);
-                        measure.clear();
-                        current_beat = 1;
-                    }
-                }
-                pos_ = -1;
-            }
-            pos_++;
+            std::cout << "Beat at " << aubio_tempo_get_last_s(aubio_tempo)
+                      << " seconds at " << aubio_tempo_get_bpm(aubio_tempo)
+                      << " bpm\n";
+            i++;
         }
-        frames_++;
-        frames_read = aubio_sndfile_read(aubio_file_, overlap_size_,
-                                          input_buffer_);
+        blocks++;
     }
+    // Reset the audio file
+    aubio_source_seek(aubio_source, 0);
+    blocks = 0;
+    read = hop_size;
+    float first_beat_time = 0;
+    int current_beat = 1;
+    fvec_t *onset_output = new_fvec(1);
+    fvec_t *pitch_output = new_fvec(1);
+    Measure measure;
+    Recorder recorder;
+    smpl_t pitch;
+    // Loop until the song is finished processing.
+    while (read == hop_size)
+    {
+        aubio_source_do(aubio_source, input_buffer, &read);
+        // Process pitch
+        aubio_pitch_do(aubio_pitch, input_buffer, pitch_output);
+        pitch = fvec_get_sample(pitch_output, 0);
+        // Process onset block
+        aubio_onset_do(aubio_onset, input_buffer, onset_output);
+        if (fvec_get_sample(onset_output, 0))
+        {
+            // Onset detected
+            float time = aubio_onset_get_last_s(aubio_onset);
+            recorder.Stop(measure, time);
+            std::cout << "Note " << pitch << " at " << time << std::endl;
+            recorder.Start(time);
+        }
+        else
+        {
+            // No start of notes
+        }
+        if (aubio_level_detection(input_buffer, -90) < 1)
+        {
 
-    float average_duration = ((float) frames_ * overlap_size_ / (float) samplerate_);
-    average_duration /= (float) (beats_ - 1);
-    measure.SetBeat(average_duration);
-    sheet.AddMeasure(measure);
-    measure.clear();
-    int tempo = (int) (1.0 / average_duration * 60.0 + 0.5);
-    if (tempo > 0)
-        std::cout << "Tempo: " << tempo << std::endl;
-
-    std::cout << "Processed " << frames_ << " frames of " << buffer_size_ <<
-                 " samples." << std::endl;
+        }
+        else
+        {
+            // Silence
+            float time = (float) blocks * hop_size / (float) samplerate;
+            recorder.Stop(measure, time);
+        }
+        recorder.Update(pitch);
+        // Process tempo
+        aubio_tempo_do(aubio_tempo, input_buffer, tempo_output);
+        if (fvec_get_sample(tempo_output, 0))
+        {
+            if (first_beat_time <= 0)
+                first_beat_time = aubio_tempo_get_last_s(aubio_tempo);
+            current_beat++;
+            if (current_beat > beats_per_measure)
+            {
+                measure.SetBeat(60 / aubio_tempo_get_bpm(aubio_tempo));
+                sheet.AddMeasure(measure);
+                measure.clear();
+                current_beat = 1;
+            }
+        }
+        blocks++;
+    }
+    std::cout << "Tempo: " << aubio_tempo_get_bpm(aubio_tempo) << std::endl;
+    del_fvec(pitch_output);
+    del_fvec(onset_output);
+    del_fvec(tempo_output);
 }
 
 void Parser::AubioDelete()
 {
-    del_aubio_sndfile(aubio_file_);
-    del_aubio_pitchdetection(pitch_detection_);
-    del_aubio_onsetdetection(onset_detection_);
-    del_aubio_peakpicker(peak_);
-    del_aubio_pvoc(pvoc_);
-    del_aubio_tempo(beat_);
-    del_fvec(input_buffer_);
-    del_fvec(onset_);
-    del_fvec(tempo_);
-    del_cvec(fft_grain_);
+    del_fvec(input_buffer);
+    del_aubio_source(aubio_source);
+    del_aubio_pitch(aubio_pitch);
+    del_aubio_onset(aubio_onset);
+    del_aubio_tempo(aubio_tempo);
     aubio_cleanup();
 }

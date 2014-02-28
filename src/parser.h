@@ -19,44 +19,30 @@
 #define PARSER_H
 
 #include "sheet_music.h"
-#include <aubio.h>
-#include <sndfileio.h>
-#include <vector>
+#include <aubio/aubio.h>
+
+const int TEMPO_LOOP = 8;
 
 class Parser
 {
 private:
-    std::vector<smpl_t> pitches_;
-    aubio_sndfile_t *aubio_file_;
-    aubio_pitchdetection_t *pitch_detection_;
-    aubio_onsetdetection_t *onset_detection_;
-    aubio_tempo_t *beat_;
-    aubio_pvoc_t *pvoc_;
-    aubio_pickpeak_t *peak_;
-    cvec_t *fft_grain_;
-    fvec_t *input_buffer_;
-    fvec_t *onset_;
-    fvec_t *tempo_;
-    uint_t samplerate_;
-    uint_t buffer_size_;
-    uint_t overlap_size_;
-    smpl_t pitch_;
-    unsigned int pos_;
-    int frames_;
-    int beats_;
-    bool is_onset_;
-    bool is_tactus_;
+    aubio_source_t *aubio_source;
+    aubio_pitch_t *aubio_pitch;
+    aubio_onset_t *aubio_onset;
+    aubio_tempo_t *aubio_tempo;
+    uint_t samplerate;
+    uint_t hop_size;
+    uint_t buffer_size;
+    fvec_t *input_buffer;
+    smpl_t silence_threshold;
 
 public:
     Parser();
-    void Parse(const char *file_name, int beats_per_measure, SheetMusic &sheet);
+    bool Parse(char *file_name, int beats_per_measure, SheetMusic &sheet);
 
 private:
-    // Initializes member variables according to the input file.
-    void AubioInit(const char *file_name);
-    // Process the entire file. Should be called after AubioInit.
+    bool AubioInit(char *file_name);
     void AubioProcess(int beats_per_measure, SheetMusic &sheet);
-    // Deallocate stuff, should be called when done with a file.
     void AubioDelete();
 };
 
