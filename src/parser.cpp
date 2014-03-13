@@ -146,17 +146,20 @@ void Parser::AubioProcess(int beats_per_measure, SheetMusic &sheet)
             if (first_beat_time <= 0)
                 first_beat_time = aubio_tempo_get_last_s(aubio_tempo);
             current_beat++;
+            // Add the measure to the sheet music and use a new measure.
             if (current_beat > beats_per_measure)
             {
                 measure.SetBeat(60 / aubio_tempo_get_bpm(aubio_tempo));
                 sheet.AddMeasure(measure);
+                // Note check = measure.GetAllNotes()[0];
+                // std::cout << "Check: " << check.GetPitch() << std::endl;
                 measure.clear();
                 current_beat = 1;
             }
         }
         blocks++;
     }
-    std::cout << "Tempo: " << aubio_tempo_get_bpm(aubio_tempo) << std::endl;
+    sheet.AddMeasure(measure);
     del_fvec(pitch_output);
     del_fvec(onset_output);
     del_fvec(tempo_output);
