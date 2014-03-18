@@ -54,7 +54,7 @@ bool FileHandler::OpenFile(QString file_name)
         cout << "File " << file_name.toStdString() << " does not exist";
         return false;
     }
-    //Get the file's type
+    //get the file's type
     QString f_type = QFileInfo(file_name).suffix();
     cout << "File type: " << f_type.toStdString() << "\n";
 

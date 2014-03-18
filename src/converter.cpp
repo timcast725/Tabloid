@@ -25,184 +25,184 @@
 
 Converter::Converter()
 {
-    measure_number_ = 1;
+    measure_number = 1;
 
-    last_key_ = -1;
-    last_beats_ = -1;
-    last_beat_type_ = -1;
-    last_clef_ = true;
+    last_key = -1;
+    last_beats = -1;
+    last_beat_type = -1;
+    last_clef = true;
 }
 
 bool Converter::Convert(const std::string &name, const SheetMusic &sheet)
 {
-    output_.open(name.c_str(), ios::out | ios::trunc);
+    output.open(name.c_str(), ios::out | ios::trunc);
 
     // MusicXML header
-    output_ << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>";
-    output_ << std::endl;
-    output_ << "<!DOCTYPE score-partwise PUBLIC" << std::endl;
-    output_ << "\"-//Recordare//DTD MusicXML 3.0 Partwise//EN\"" << std::endl;
-    output_ << "\"http://www.musicxml.org/dtds/partwise.dtd\">" << std::endl;
+    output << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>";
+    output << std::endl;
+    output << "<!DOCTYPE score-partwise PUBLIC" << std::endl;
+    output << "\"-//Recordare//DTD MusicXML 3.0 Partwise//EN\"" << std::endl;
+    output << "\"http://www.musicxml.org/dtds/partwise.dtd\">" << std::endl;
 
     // Sheet music format
-    Open("score-partwise", "version=\"3.0\"");
-    Open("part-list");
-    Open("score-part", "id=\"P1\"");
-    Print("part-name", "");
-    Close();
-    Close();
-    Open("part", "id=\"P1\"");
+    open("score-partwise", "version=\"3.0\"");
+    open("part-list");
+    open("score-part", "id=\"P1\"");
+    print("part-name", "");
+    close();
+    close();
+    open("part", "id=\"P1\"");
 
-    std::vector<Measure> measures = sheet.GetAllMeasures();
+    std::vector<Measure> measures = sheet.getAllMeasures();
     for (int i = 0; i < measures.size(); i++)
     {
-        AddMeasure();
-        std::vector<Note> notes = measures[i].GetAllNotes();
+        addMeasure();
+        std::vector<Note> notes = measures[i].getAllNotes();
         for (int j = 0; j < notes.size(); j++)
         {
-            AddNote(notes[j].GetPitch(), notes[j].GetStart(),
-                    notes[j].GetDuration(), measures[i].GetBeat());
+            addNote(notes[j].getPitch(), notes[j].getstart(),
+                    notes[j].getDuration(), measures[i].getBeat());
         }
-        Close();
+        close();
     }
 
-    while (tags_.size() > 0)
-        Close();
-    output_.close();
+    while (tags.size() > 0)
+        close();
+    output.close();
 
     return true;
 }
 
-void Converter::Open(std::string tag, std::string option)
+void Converter::open(std::string tag, std::string option)
 {
-    for (int i = 0; i < tags_.size(); i++)
-        output_ << "\t";
+    for (int i = 0; i < tags.size(); i++)
+        output << "\t";
     if (option == "")
-        output_ << "<" << tag << ">" << std::endl;
+        output << "<" << tag << ">" << std::endl;
     else
-        output_ << "<" << tag << " " << option << ">" << std::endl;
-    tags_.push_back(tag);
+        output << "<" << tag << " " << option << ">" << std::endl;
+    tags.push_back(tag);
 }
 
-void Converter::Print(std::string tag, std::string content)
+void Converter::print(std::string tag, std::string content)
 {
-    for (int i = 0; i < tags_.size(); i++)
-        output_ << "\t";
-    output_ << "<" << tag << ">" << content << "</" << tag << ">" << std::endl;
+    for (int i = 0; i < tags.size(); i++)
+        output << "\t";
+    output << "<" << tag << ">" << content << "</" << tag << ">" << std::endl;
 }
 
-void Converter::Close()
+void Converter::close()
 {
-    for (int i = 1; i < tags_.size(); i++)
-        output_ << "\t";
-    output_ << "</" << tags_.back() << ">" << std::endl;
-    tags_.pop_back();
+    for (int i = 1; i < tags.size(); i++)
+        output << "\t";
+    output << "</" << tags.back() << ">" << std::endl;
+    tags.pop_back();
 }
 
-void Converter::AddNote(int pitch, float start, float duration, float beat_duration, int divisions)
+void Converter::addNote(int pitch, float start, float duration, float beat_duration, int divisions)
 {
-    Open("note");
+    open("note");
     if (pitch == 0)
     {
-        for (int i = 0; i < tags_.size(); i++)
-            output_ << "\t";
+        for (int i = 0; i < tags.size(); i++)
+            output << "\t";
         std::cout << "<rest/>" << std::endl;
     }
     else
     {
-        Open("pitch");
+        open("pitch");
         switch (pitch % 12)
         {
             case 0:
-                Print("step", "C");
+                print("step", "C");
                 break;
             case 1:
-                Print("step", "C");
-                Print("alter", "1");
+                print("step", "C");
+                print("alter", "1");
                 break;
             case 2:
-                Print("step", "D");
+                print("step", "D");
                 break;
             case 3:
-                Print("step", "E");
-                Print("alter", "-1");
+                print("step", "E");
+                print("alter", "-1");
                 break;
             case 4:
-                Print("step", "E");
+                print("step", "E");
                 break;
             case 5:
-                Print("step", "F");
+                print("step", "F");
                 break;
             case 6:
-                Print("step", "F");
-                Print("alter", "1");
+                print("step", "F");
+                print("alter", "1");
                 break;
             case 7:
-                Print("step", "G");
+                print("step", "G");
                 break;
             case 8:
-                Print("step", "A");
-                Print("alter", "-1");
+                print("step", "A");
+                print("alter", "-1");
                 break;
             case 9:
-                Print("step", "A");
+                print("step", "A");
                 break;
             case 10:
-                Print("step", "B");
-                Print("alter", "-1");
+                print("step", "B");
+                print("alter", "-1");
                 break;
             case 11:
-                Print("step", "B");
+                print("step", "B");
                 break;
         }
         std::ostringstream octave;
         octave << (pitch / 12) - 1;
-        Print("octave", octave.str());
-        Close();
+        print("octave", octave.str());
+        close();
     }
     float beats = duration / beat_duration;
     std::ostringstream d;
     d << (int) (beats / divisions + 0.5);
-    Print("duration", d.str());
-    Close();
+    print("duration", d.str());
+    close();
 }
 
-void Converter::AddMeasure(int divisions, int key, int beats, int beat_type, bool treble)
+void Converter::addMeasure(int divisions, int key, int beats, int beat_type, bool treble)
 {
     std::ostringstream n;
-    n << "number=\"" << measure_number_ << "\"";
-    Open("measure", n.str());
-    Open("attributes");
+    n << "number=\"" << measure_number << "\"";
+    open("measure", n.str());
+    open("attributes");
     std::ostringstream d;
     d << divisions;
-    Print("divisions", d.str());
-    if (last_key_ != key || last_beats_ != beats || last_beat_type_ != beat_type || last_clef_ != treble)
+    print("divisions", d.str());
+    if (last_key != key || last_beats != beats || last_beat_type != beat_type || last_clef != treble)
     {
-        last_key_ = key;
-        last_beats_ = beats;
-        last_beat_type_ = beat_type;
-        last_clef_ = treble;
-        Open("key");
+        last_key = key;
+        last_beats = beats;
+        last_beat_type = beat_type;
+        last_clef = treble;
+        open("key");
         std::ostringstream k;
         k << key;
-        Print("fifths", k.str());
-        Close();
-        Open("time");
+        print("fifths", k.str());
+        close();
+        open("time");
         std::ostringstream b;
         b << beats;
-        Print("beats", b.str());
+        print("beats", b.str());
         std::ostringstream t;
         t << beat_type;
-        Print("beat-type", t.str());
-        Close();
-        Open("clef");
+        print("beat-type", t.str());
+        close();
+        open("clef");
         if (treble)
         {
-            Print("sign", "G");
-            Print("line", "2");
+            print("sign", "G");
+            print("line", "2");
         }
-        Close();
+        close();
     }
-    Close();
-    measure_number_++;
+    close();
+    measure_number++;
 }

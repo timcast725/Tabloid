@@ -27,17 +27,17 @@ Measure::Measure()
 
 Measure::Measure(vector<Note> new_notes)
 {
-    AddNotes(new_notes);
+    addNotes(new_notes);
 }
 
 //Add one note
-void Measure::AddNote(Note new_note)
+void Measure::addNote(Note new_note)
 {
     notes.push_back(new_note);
 }
 
 //Add several notes in vector form
-void Measure::AddNotes(vector<Note> new_notes)
+void Measure::addNotes(vector<Note> new_notes)
 {
     for (vector<Note>::iterator it = new_notes.begin();
          it != new_notes.end(); it++)
@@ -47,14 +47,14 @@ void Measure::AddNotes(vector<Note> new_notes)
 }
 
 //Remove the last note in the measure
-Note Measure::RemoveLastNote()
+Note Measure::removeLastNote()
 {
     Note last = notes[notes.size()-1];
     notes.pop_back();
     return last;
 }
 //Remove the first note in the measure
-Note Measure::RemoveHeadNote()
+Note Measure::removeHeadNote()
 {
     Note head_note = notes[0];
     notes.erase(notes.begin());
@@ -66,7 +66,7 @@ void Measure::clear()
     notes.clear();
 }
 
-vector<Note> Measure::GetAllNotes() const
+vector<Note> Measure::getAllNotes() const
 {
     return notes;
 }

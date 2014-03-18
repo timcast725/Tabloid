@@ -31,18 +31,18 @@ public:
     //Instantiate the sheet music with measures
     SheetMusic(vector<Measure> new_measures);
     //Adds a single measure to the end of the sheet
-    void AddMeasure(Measure new_measure);
+    void addMeasure(Measure new_measure);
     //Adds a vector of measures to the end of the sheet
-    void AddMeasures(vector<Measure> new_measures);
+    void addMeasures(vector<Measure> new_measures);
     //Removes a single measure from the end of the sheet
     //and returns the measure removed.
-    Measure RemoveLastMeasure();
+    Measure removeLastMeasure();
     //Removes a single measure from the beginning of the sheet
     //and returns the measure removed.
-    Measure RemoveHeadMeasure();
+    Measure removeHeadMeasure();
 
     //Accessor for measure vector
-    vector<Measure> GetAllMeasures() const;
+    vector<Measure> getAllMeasures() const;
 
     void reset();
 

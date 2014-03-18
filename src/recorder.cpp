@@ -18,24 +18,24 @@
 #include "note.h"
 #include "recorder.h"
 
-void Recorder::Start(float time)
+void Recorder::start(float time)
 {
     recording = true;
     start_time = time;
 }
 
-void Recorder::Stop(Measure &measure, float time)
+void Recorder::stop(Measure &measure, float time)
 {
     if (recording)
     {
         Note note(pitches[pitches.size() / 2], 127, time - start_time, start_time);
-        measure.AddNote(note);
+        measure.addNote(note);
         pitches.clear();
         recording = false;
     }
 }
 
-void Recorder::Update(int pitch)
+void Recorder::update(int pitch)
 {
     if (recording)
         pitches.push_back(pitch);

@@ -33,10 +33,10 @@ public:
     Note(int p, int v, float d, float s);
     Note();
 
-    int GetPitch();
-    int GetVelocity();
-    float GetDuration();
-    float GetStart();
+    int getPitch();
+    int getVelocity();
+    float getDuration();
+    float getstart();
 
 private:
     int pitch;

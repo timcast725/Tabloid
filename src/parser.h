@@ -41,9 +41,9 @@ public:
     bool Parse(char *file_name, int beats_per_measure, SheetMusic &sheet);
 
 private:
-    bool AubioInit(char *file_name);
-    void AubioProcess(int beats_per_measure, SheetMusic &sheet);
-    void AubioDelete();
+    bool aubioInit(char *file_name);
+    void aubioProcess(int beats_per_measure, SheetMusic &sheet);
+    void aubioDelete();
 };
 
 

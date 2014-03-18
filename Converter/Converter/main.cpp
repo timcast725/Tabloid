@@ -56,11 +56,11 @@ int main(int argc, char *argv[])
     test_notes_one_ms.push_back(*(new Note(50, 68, 1000, 0)));
 
     Measure test_measure;
-    test_measure.AddNotes(test_notes);
+    test_measure.addNotes(test_notes);
     SheetMusic test_sheet;
-    test_sheet.AddMeasure(test_measure);
+    test_sheet.addMeasure(test_measure);
 
-    vector<Measure>::iterator sheet_iter = test_sheet.GetAllMeasures().begin();
+    vector<Measure>::iterator sheet_iter = test_sheet.getAllMeasures().begin();
 
     MidiConverter test_converter = MidiConverter("TestOutput");
     cout << "\ntest_converter's output_file_name_: " << test_converter.output_file_name();

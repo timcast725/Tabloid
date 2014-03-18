@@ -36,24 +36,24 @@ public:
     //Instantiate the measure with notes
     Measure(vector<Note> new_notes);
     //Adds a single note to the end of the measure
-    void AddNote(Note new_note);
+    void addNote(Note new_note);
     //Adds a vector of notes to the end of the measure
-    void AddNotes(vector<Note> new_notes);
+    void addNotes(vector<Note> new_notes);
     //Removes a single note from the end of the measure
     //and returns the note removed.
-    Note RemoveLastNote();
+    Note removeLastNote();
     //Removes a single note from the beginning of the measure
     //and returns the note removed.
-    Note RemoveHeadNote();
+    Note removeHeadNote();
 
     //Remove all notes from measure
     void clear();
 
     //Accessor method for vector of notes in this measure
-    vector<Note> GetAllNotes() const;
+    vector<Note> getAllNotes() const;
 
-    float GetBeat() { return beat; }
-    void SetBeat(float b) { beat = b; }
+    float getBeat() { return beat; }
+    void setBeat(float b) { beat = b; }
 
 private:
     //Holds all the notes in this measure

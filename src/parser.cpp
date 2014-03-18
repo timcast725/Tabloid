@@ -39,17 +39,17 @@ Parser::Parser()
 
 bool Parser::Parse(char *file_name, int beats_per_measure, SheetMusic &sheet)
 {
-    if (!AubioInit(file_name))
+    if (!aubioInit(file_name))
     {
         std::cerr << "Failed to initialize" << std::endl;
         return false;
     }
-    AubioProcess(beats_per_measure, sheet);
-    AubioDelete();
+    aubioProcess(beats_per_measure, sheet);
+    aubioDelete();
     return true;
 }
 
-bool Parser::AubioInit(char *file_name)
+bool Parser::aubioInit(char *file_name)
 {
     // Open the audio file.
     std::cout << "Opening file " << file_name << std::endl;
@@ -73,7 +73,7 @@ bool Parser::AubioInit(char *file_name)
     return true;
 }
 
-void Parser::AubioProcess(int beats_per_measure, SheetMusic &sheet)
+void Parser::aubioProcess(int beats_per_measure, SheetMusic &sheet)
 {
     std::cout << "Processing...\n";
     int blocks = 0;
@@ -120,9 +120,9 @@ void Parser::AubioProcess(int beats_per_measure, SheetMusic &sheet)
         {
             // Onset detected
             float time = aubio_onset_get_last_s(aubio_onset);
-            recorder.Stop(measure, time);
+            recorder.stop(measure, time);
             std::cout << "Note " << pitch << " at " << time << std::endl;
-            recorder.Start(time);
+            recorder.start(time);
         }
         else
         {
@@ -136,9 +136,9 @@ void Parser::AubioProcess(int beats_per_measure, SheetMusic &sheet)
         {
             // Silence
             float time = (float) blocks * hop_size / (float) samplerate;
-            recorder.Stop(measure, time);
+            recorder.stop(measure, time);
         }
-        recorder.Update(pitch);
+        recorder.update(pitch);
         // Process tempo
         aubio_tempo_do(aubio_tempo, input_buffer, tempo_output);
         if (fvec_get_sample(tempo_output, 0))
@@ -149,23 +149,23 @@ void Parser::AubioProcess(int beats_per_measure, SheetMusic &sheet)
             // Add the measure to the sheet music and use a new measure.
             if (current_beat > beats_per_measure)
             {
-                measure.SetBeat(60 / aubio_tempo_get_bpm(aubio_tempo));
-                sheet.AddMeasure(measure);
-                // Note check = measure.GetAllNotes()[0];
-                // std::cout << "Check: " << check.GetPitch() << std::endl;
+                measure.setBeat(60 / aubio_tempo_get_bpm(aubio_tempo));
+                sheet.addMeasure(measure);
+                // Note check = measure.getAllNotes()[0];
+                // std::cout << "Check: " << check.getPitch() << std::endl;
                 measure.clear();
                 current_beat = 1;
             }
         }
         blocks++;
     }
-    sheet.AddMeasure(measure);
+    sheet.addMeasure(measure);
     del_fvec(pitch_output);
     del_fvec(onset_output);
     del_fvec(tempo_output);
 }
 
-void Parser::AubioDelete()
+void Parser::aubioDelete()
 {
     del_fvec(input_buffer);
     del_aubio_source(aubio_source);

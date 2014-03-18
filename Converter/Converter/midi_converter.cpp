@@ -78,7 +78,7 @@ bool MidiConverter::Convert(SheetMusic sheet)
     Array<uchar> temp_event;
     temp_event.setSize(3); //midi event data must be of size 3
 
-    vector<Measure> temp_measures = sheet.GetAllMeasures();
+    vector<Measure> temp_measures = sheet.getAllMeasures();
     vector<Note> temp_notes;
 
     // Calculated how many milliseconds each midi tick takes based off of the
@@ -102,22 +102,22 @@ bool MidiConverter::Convert(SheetMusic sheet)
         sheet_iter != temp_measures.end(); sheet_iter++)
     {
         //Iterate through measure
-        temp_notes = sheet_iter->GetAllNotes();
+        temp_notes = sheet_iter->getAllNotes();
         for(vector<Note>::iterator measure_iter = temp_notes.begin();
             measure_iter != temp_notes.end(); measure_iter++)
         {
             temp_event[0] = 0x90; //turn the note on
-            temp_event[2] = measure_iter->GetVelocity();
-            temp_event[1] = measure_iter->GetPitch();
-            cout << "\nNEW NOTE: setting pitch " << measure_iter->GetPitch();
+            temp_event[2] = measure_iter->getVelocity();
+            temp_event[1] = measure_iter->getPitch();
+            cout << "\nNEW NOTE: setting pitch " << measure_iter->getPitch();
             event_time =
-                (int)((measure_iter->GetStart())/milliseconds_per_tick);
+                (int)((measure_iter->getstart())/milliseconds_per_tick);
             //Add the event (turn on velocity, pitch) to the midi file at time event_time
             temp_file.addEvent(0, event_time, temp_event);
             cout << "\nadding event at " << event_time;
             //Increment event_time by the duration of the note
             event_time +=
-                (int)((measure_iter->GetDuration())/milliseconds_per_tick);
+                (int)((measure_iter->getDuration())/milliseconds_per_tick);
             temp_event[0] = 0x80; //turn the pitch and velocity off
             //Add the event (turn off velocity, pitch) to the midi file at time event_time
             temp_file.addEvent(0, event_time, temp_event);

@@ -31,22 +31,22 @@ Note::Note()
 
 }
 
-int Note::GetPitch()
+int Note::getPitch()
 {
     return pitch;
 }
 
-int Note::GetVelocity()
+int Note::getVelocity()
 {
     return velocity;
 }
 
-float Note::GetDuration()
+float Note::getDuration()
 {
     return duration;
 }
 
-float Note::GetStart()
+float Note::getstart()
 {
     return start;
 }
