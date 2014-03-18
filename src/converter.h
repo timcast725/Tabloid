@@ -33,6 +33,10 @@ public:
 
 private:
     int measure_number_;
+    int last_key_;
+    int last_beats_;
+    int last_beat_type_;
+    bool last_clef_;
     std::ofstream output_;
     std::vector<std::string> tags_;
     void Open(std::string tag, std::string option="");

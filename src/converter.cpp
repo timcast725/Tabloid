@@ -26,6 +26,11 @@
 Converter::Converter()
 {
     measure_number_ = 1;
+
+    last_key_ = -1;
+    last_beats_ = -1;
+    last_beat_type_ = -1;
+    last_clef_ = true;
 }
 
 bool Converter::Convert(const std::string &name, const SheetMusic &sheet)
@@ -171,26 +176,33 @@ void Converter::AddMeasure(int divisions, int key, int beats, int beat_type, boo
     std::ostringstream d;
     d << divisions;
     Print("divisions", d.str());
-    Open("key");
-    std::ostringstream k;
-    k << key;
-    Print("fifths", k.str());
-    Close();
-    Open("time");
-    std::ostringstream b;
-    b << beats;
-    Print("beats", b.str());
-    std::ostringstream t;
-    t << beat_type;
-    Print("beat-type", t.str());
-    Close();
-    Open("clef");
-    if (treble)
+    if (last_key_ != key || last_beats_ != beats || last_beat_type_ != beat_type || last_clef_ != treble)
     {
-        Print("sign", "G");
-        Print("line", "2");
+        last_key_ = key;
+        last_beats_ = beats;
+        last_beat_type_ = beat_type;
+        last_clef_ = treble;
+        Open("key");
+        std::ostringstream k;
+        k << key;
+        Print("fifths", k.str());
+        Close();
+        Open("time");
+        std::ostringstream b;
+        b << beats;
+        Print("beats", b.str());
+        std::ostringstream t;
+        t << beat_type;
+        Print("beat-type", t.str());
+        Close();
+        Open("clef");
+        if (treble)
+        {
+            Print("sign", "G");
+            Print("line", "2");
+        }
+        Close();
     }
-    Close();
     Close();
     measure_number_++;
 }
