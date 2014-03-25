@@ -15,17 +15,29 @@
 // You should have received a copy of the GNU General Public License
 // along with Tabloid.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "tabloid_window.h"
+#ifndef TABLOID_WINDOW_H
+#define TABLOID_WINDOW_H
 
-#include <iostream>
-#include <QApplication>
+#include <QString>
+#include <QWidget>
 
-int main(int argc, char *argv[])
+class TabloidWindow : public QWidget
 {
-    QApplication app(argc, argv);
+    Q_OBJECT
 
-    TabloidWindow window;
-    window.show();
+public:
+    // Tabloid Window currently just contains an open and transcribe button.
+    TabloidWindow(int w = 200, int h = 100, QWidget *parent = 0);
 
-    return app.exec();
-}
+public slots:
+    // Action for clicking on the open button.
+    void clickOpen();
+    // Action for clicking the transcribe button.
+    void clickTranscribe();
+private:
+    int width;
+    int height;
+    QString file_name;
+};
+
+#endif
