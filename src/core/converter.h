@@ -14,7 +14,6 @@
 
 // You should have received a copy of the GNU General Public License
 // along with Tabloid.  If not, see <http://www.gnu.org/licenses/>.
-//
 
 #ifndef CONVERTER_H
 #define CONVERTER_H
@@ -27,6 +26,9 @@ class Converter
 {
 public:
     Converter() { }
+    // Convert our sheet music data structure. into MusicXML.
+    // name is the name of the file the converter outputs to.
+    // sheet is our sheet music to convert from. Get this from the parser.
     virtual bool convert(const std::string &name, const SheetMusic &sheet) = 0;
 };
 

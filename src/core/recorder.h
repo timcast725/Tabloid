@@ -26,22 +26,19 @@ class Recorder
 {
 public:
     Recorder() { recording = false; }
-    /**
-     * Start recording.
-     * @param time The time the recording started at.
-     */
+    // Start recording.
+    // time is the time in seconds the recording started at.
     void start(float time);
-    /**
-     * Stop the recording and add the note to the measure.
-     * @param measure The measure to add the note to.
-     * @param time The time in seconds the recorder stopped at.
-     */
+
+    // Stop the recording and add the note.
+    // measure is the measure to add the recorded note to.
+    // time is the seconds the recorder ended on.
     void stop(Measure &measure, float time);
-    /**
-     * To be called every frame.
-     * @param pitch The midi note currently being played.
-     */
+
+    // Call this every frame when using the recorder.
+    // pitch is added to a vector of pitches when this is recording.
     void update(int pitch);
+
 private:
     bool recording;
     float start_time;
