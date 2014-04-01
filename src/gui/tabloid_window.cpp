@@ -18,6 +18,7 @@
 #include "converter.h"
 #include "parser.h"
 #include "sheet_music.h"
+#include "sheet_music_converter.h"
 #include "tabloid_window.h"
 
 #include <iostream>
@@ -64,8 +65,8 @@ void TabloidWindow::clickTranscribe()
         std::cerr << "Failed to parse" << std::endl;
         return;
     }
-    Converter convert;
+    Converter *convert = new SheetMusicConverter();
     file_name.chop(4);
     file_name.append(".xml");
-    convert.Convert(file_name.toStdString(), music);
+    convert->convert(file_name.toStdString(), music);
 }

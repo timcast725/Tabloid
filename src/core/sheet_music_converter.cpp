@@ -16,6 +16,7 @@
 // along with Tabloid.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#include "sheet_music_converter.h"
 #include "converter.h"
 #include "note.h"
 
@@ -23,7 +24,7 @@
 #include <sstream>
 
 
-Converter::Converter()
+SheetMusicConverter::SheetMusicConverter()
 {
     measure_number = 1;
 
@@ -33,7 +34,7 @@ Converter::Converter()
     last_clef = true;
 }
 
-bool Converter::Convert(const std::string &name, const SheetMusic &sheet)
+bool SheetMusicConverter::convert(const std::string &name, const SheetMusic &sheet)
 {
     output.open(name.c_str(), ios::out | ios::trunc);
 
@@ -73,7 +74,7 @@ bool Converter::Convert(const std::string &name, const SheetMusic &sheet)
     return true;
 }
 
-void Converter::open(std::string tag, std::string option)
+void SheetMusicConverter::open(std::string tag, std::string option)
 {
     for (int i = 0; i < tags.size(); i++)
         output << "\t";
@@ -84,14 +85,14 @@ void Converter::open(std::string tag, std::string option)
     tags.push_back(tag);
 }
 
-void Converter::print(std::string tag, std::string content)
+void SheetMusicConverter::print(std::string tag, std::string content)
 {
     for (int i = 0; i < tags.size(); i++)
         output << "\t";
     output << "<" << tag << ">" << content << "</" << tag << ">" << std::endl;
 }
 
-void Converter::close()
+void SheetMusicConverter::close()
 {
     for (int i = 1; i < tags.size(); i++)
         output << "\t";
@@ -99,7 +100,7 @@ void Converter::close()
     tags.pop_back();
 }
 
-void Converter::addNote(int pitch, float start, float duration, float beat_duration, int divisions)
+void SheetMusicConverter::addNote(int pitch, float start, float duration, float beat_duration, int divisions)
 {
     open("note");
     if (pitch == 0)
@@ -167,7 +168,7 @@ void Converter::addNote(int pitch, float start, float duration, float beat_durat
     close();
 }
 
-void Converter::addMeasure(int divisions, int key, int beats, int beat_type, bool treble)
+void SheetMusicConverter::addMeasure(int divisions, int key, int beats, int beat_type, bool treble)
 {
     std::ostringstream n;
     n << "number=\"" << measure_number << "\"";
