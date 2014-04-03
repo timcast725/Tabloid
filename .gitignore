@@ -1,5 +1,7 @@
 Makefile
 
+tabloid
+
 # Tabloid output
 *.xml
 

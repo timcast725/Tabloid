@@ -60,7 +60,7 @@ void TabloidWindow::clickTranscribe()
     }
     SheetMusic music;
     Parser parse;
-    if (!parse.Parse((char_t *) file_name.toUtf8().constData(), 4, music))
+    if (!parse.parse((char_t *) file_name.toUtf8().constData(), 4, music))
     {
         std::cerr << "Failed to parse" << std::endl;
         return;

@@ -37,7 +37,7 @@ Parser::Parser()
     silence_threshold = -90;
 }
 
-bool Parser::Parse(char *file_name, int beats_per_measure, SheetMusic &sheet)
+bool Parser::parse(char *file_name, int beats_per_measure, SheetMusic &sheet)
 {
     if (!aubioInit(file_name))
     {
