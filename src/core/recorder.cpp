@@ -17,6 +17,15 @@
 
 #include "note.h"
 #include "recorder.h"
+#include <iostream>
+
+Recorder::Recorder(SheetMusic *s, float end)
+{
+    sheet = s;
+    recording = false;
+    measure_end = end;
+    time_left = end;
+}
 
 void Recorder::start(float time)
 {
@@ -24,11 +33,22 @@ void Recorder::start(float time)
     start_time = time;
 }
 
-void Recorder::stop(Measure &measure, float time)
+void Recorder::stop(float stop_time)
 {
     if (recording)
     {
-        Note note(pitches[pitches.size() / 2], 127, time - start_time, start_time);
+        Note note(pitches[pitches.size() / 2], 127, stop_time - start_time, start_time);
+        time_left -= stop_time - start_time;
+        // Add the note in if it does not extend over halfway into the next measure.
+        float limit = stop_time - start_time;
+        limit /= 2;
+        if (time_left < -limit)
+        {
+            measure.setBeat(60 / bpm);
+            sheet->addMeasure(measure);
+            measure.clear();
+            time_left = measure_end - stop_time;
+        }
         measure.addNote(note);
         pitches.clear();
         recording = false;
@@ -39,4 +59,16 @@ void Recorder::update(int pitch)
 {
     if (recording)
         pitches.push_back(pitch);
+}
+
+void Recorder::load(float time, float b, int beats_per_measure)
+{
+    bpm = b;
+    measure_end = time + 60 / bpm * beats_per_measure;
+}
+
+void Recorder::end()
+{
+    measure.setBeat(60 / bpm);
+    sheet->addMeasure(measure);
 }

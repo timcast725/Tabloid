@@ -100,17 +100,19 @@ void Parser::aubioProcess(int beats_per_measure, SheetMusic &sheet)
     aubio_source_seek(aubio_source, 0);
     blocks = 0;
     read = hop_size;
-    float first_beat_time = 0;
+    float time;
     int current_beat = 1;
     fvec_t *onset_output = new_fvec(1);
     fvec_t *pitch_output = new_fvec(1);
-    Measure measure;
-    Recorder recorder;
+    Recorder recorder(&sheet, 60 / aubio_tempo_get_bpm(aubio_tempo) * beats_per_measure);
     smpl_t pitch;
     // Loop until the song is finished processing.
     while (read == hop_size)
     {
+        // Read the audio source into the input buffer.
+        // Read is how much was read.
         aubio_source_do(aubio_source, input_buffer, &read);
+
         // Process pitch
         aubio_pitch_do(aubio_pitch, input_buffer, pitch_output);
         pitch = fvec_get_sample(pitch_output, 0);
@@ -119,8 +121,8 @@ void Parser::aubioProcess(int beats_per_measure, SheetMusic &sheet)
         if (fvec_get_sample(onset_output, 0))
         {
             // Onset detected
-            float time = aubio_onset_get_last_s(aubio_onset);
-            recorder.stop(measure, time);
+            time = aubio_onset_get_last_s(aubio_onset);
+            recorder.stop(time);
             std::cout << "Note " << pitch << " at " << time << std::endl;
             recorder.start(time);
         }
@@ -128,6 +130,9 @@ void Parser::aubioProcess(int beats_per_measure, SheetMusic &sheet)
         {
             // No start of notes
         }
+
+        time = (float) blocks * hop_size / (float) samplerate;
+
         if (aubio_level_detection(input_buffer, -90) < 1)
         {
 
@@ -135,31 +140,26 @@ void Parser::aubioProcess(int beats_per_measure, SheetMusic &sheet)
         else
         {
             // Silence
-            float time = (float) blocks * hop_size / (float) samplerate;
-            recorder.stop(measure, time);
+            recorder.stop(time);
         }
         recorder.update(pitch);
+
         // Process tempo
         aubio_tempo_do(aubio_tempo, input_buffer, tempo_output);
         if (fvec_get_sample(tempo_output, 0))
         {
-            if (first_beat_time <= 0)
-                first_beat_time = aubio_tempo_get_last_s(aubio_tempo);
+            std::cout << "Beat!\n";
             current_beat++;
             // Add the measure to the sheet music and use a new measure.
             if (current_beat > beats_per_measure)
             {
-                measure.setBeat(60 / aubio_tempo_get_bpm(aubio_tempo));
-                sheet.addMeasure(measure);
-                // Note check = measure.getAllNotes()[0];
-                // std::cout << "Check: " << check.getPitch() << std::endl;
-                measure.clear();
+                recorder.load(time, (float) aubio_tempo_get_bpm(aubio_tempo), beats_per_measure);
                 current_beat = 1;
             }
         }
         blocks++;
     }
-    sheet.addMeasure(measure);
+    recorder.end();
     del_fvec(pitch_output);
     del_fvec(onset_output);
     del_fvec(tempo_output);
