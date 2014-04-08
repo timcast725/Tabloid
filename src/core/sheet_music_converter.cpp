@@ -55,11 +55,11 @@ bool SheetMusicConverter::convert(const std::string &name, const SheetMusic &she
     open("part", "id=\"P1\"");
 
     std::vector<Measure> measures = sheet.getAllMeasures();
-    for (int i = 0; i < measures.size(); i++)
+    for (unsigned int i = 0; i < measures.size(); i++)
     {
         addMeasure();
         std::vector<Note> notes = measures[i].getAllNotes();
-        for (int j = 0; j < notes.size(); j++)
+        for (unsigned int j = 0; j < notes.size(); j++)
         {
             addNote(notes[j].getPitch(), notes[j].getstart(),
                     notes[j].getDuration(), measures[i].getBeat());
@@ -76,7 +76,7 @@ bool SheetMusicConverter::convert(const std::string &name, const SheetMusic &she
 
 void SheetMusicConverter::open(std::string tag, std::string option)
 {
-    for (int i = 0; i < tags.size(); i++)
+    for (unsigned int i = 0; i < tags.size(); i++)
         output << "\t";
     if (option == "")
         output << "<" << tag << ">" << std::endl;
@@ -87,14 +87,14 @@ void SheetMusicConverter::open(std::string tag, std::string option)
 
 void SheetMusicConverter::print(std::string tag, std::string content)
 {
-    for (int i = 0; i < tags.size(); i++)
+    for (unsigned int i = 0; i < tags.size(); i++)
         output << "\t";
     output << "<" << tag << ">" << content << "</" << tag << ">" << std::endl;
 }
 
 void SheetMusicConverter::close()
 {
-    for (int i = 1; i < tags.size(); i++)
+    for (unsigned int i = 1; i < tags.size(); i++)
         output << "\t";
     output << "</" << tags.back() << ">" << std::endl;
     tags.pop_back();
@@ -105,7 +105,7 @@ void SheetMusicConverter::addNote(int pitch, float start, float duration, float 
     open("note");
     if (pitch == 0)
     {
-        for (int i = 0; i < tags.size(); i++)
+        for (unsigned int i = 0; i < tags.size(); i++)
             output << "\t";
         std::cout << "<rest/>" << std::endl;
     }
