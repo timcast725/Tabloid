@@ -17,7 +17,6 @@
 
 
 //The Measure class represents a measure of music. It holds multiple notes.
-//
 
 #ifndef MEASURE_H
 #define MEASURE_H

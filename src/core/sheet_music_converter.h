@@ -30,6 +30,7 @@ class SheetMusicConverter : public Converter
 {
 public:
     SheetMusicConverter();
+    // Converts our SheetMusic datatype to MusicXML sheet music.
     bool convert(const std::string &name, const SheetMusic &sheet);
 
 private:

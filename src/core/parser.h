@@ -38,7 +38,10 @@ private:
 
 public:
     Parser();
-    bool Parse(char *file_name, int beats_per_measure, SheetMusic &sheet);
+    // Parse the song into sheet music.
+    // file_name is the name of the song file to parse.
+    // sheet is the output.
+    bool parse(char *file_name, int beats_per_measure, SheetMusic &sheet);
 
 private:
     bool aubioInit(char *file_name);

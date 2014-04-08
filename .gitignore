@@ -1,5 +1,9 @@
 Makefile
 
+tabloid
+
+*.pro.user
+
 # Tabloid output
 *.xml
 

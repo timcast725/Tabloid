@@ -16,7 +16,8 @@ HEADERS += src/core/converter.h \
            src/core/recorder.h \
            src/core/sheet_music.h \
            src/core/sheet_music_converter.h \
-           src/gui/tabloid_window.h
+           src/gui/tabloid_window.h \
+    src/core/guitar_tab_converter.h
 SOURCES += src/tabloid.cpp \
            src/core/measure.cpp \
            src/core/note.cpp \
