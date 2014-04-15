@@ -74,32 +74,6 @@ bool SheetMusicConverter::convert(const std::string &name, const SheetMusic &she
     return true;
 }
 
-void SheetMusicConverter::open(std::string tag, std::string option)
-{
-    for (unsigned int i = 0; i < tags.size(); i++)
-        output << "\t";
-    if (option == "")
-        output << "<" << tag << ">" << std::endl;
-    else
-        output << "<" << tag << " " << option << ">" << std::endl;
-    tags.push_back(tag);
-}
-
-void SheetMusicConverter::print(std::string tag, std::string content)
-{
-    for (unsigned int i = 0; i < tags.size(); i++)
-        output << "\t";
-    output << "<" << tag << ">" << content << "</" << tag << ">" << std::endl;
-}
-
-void SheetMusicConverter::close()
-{
-    for (unsigned int i = 1; i < tags.size(); i++)
-        output << "\t";
-    output << "</" << tags.back() << ">" << std::endl;
-    tags.pop_back();
-}
-
 void SheetMusicConverter::addNote(int pitch, float start, float duration, float beat_duration, int divisions)
 {
     open("note");
@@ -112,50 +86,11 @@ void SheetMusicConverter::addNote(int pitch, float start, float duration, float 
     else
     {
         open("pitch");
-        switch (pitch % 12)
-        {
-            case 0:
-                print("step", "C");
-                break;
-            case 1:
-                print("step", "C");
-                print("alter", "1");
-                break;
-            case 2:
-                print("step", "D");
-                break;
-            case 3:
-                print("step", "E");
-                print("alter", "-1");
-                break;
-            case 4:
-                print("step", "E");
-                break;
-            case 5:
-                print("step", "F");
-                break;
-            case 6:
-                print("step", "F");
-                print("alter", "1");
-                break;
-            case 7:
-                print("step", "G");
-                break;
-            case 8:
-                print("step", "A");
-                print("alter", "-1");
-                break;
-            case 9:
-                print("step", "A");
-                break;
-            case 10:
-                print("step", "B");
-                print("alter", "-1");
-                break;
-            case 11:
-                print("step", "B");
-                break;
-        }
+        std::string letter;
+        std::string alter;
+        Converter::getNote(pitch, letter, alter);
+        print("step", letter);
+        print("alter", alter);
         std::ostringstream octave;
         octave << (pitch / 12) - 1;
         print("octave", octave.str());

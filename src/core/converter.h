@@ -21,6 +21,8 @@
 #include "sheet_music.h"
 
 #include <string>
+#include <fstream>
+#include <vector>
 
 class Converter
 {
@@ -30,6 +32,18 @@ public:
     // name is the name of the file the converter outputs to.
     // sheet is our sheet music to convert from. Get this from the parser.
     virtual bool convert(const std::string &name, const SheetMusic &sheet) = 0;
+protected:
+    virtual void getNote(int pitch, std::string &letter, std::string &alter);
+    void open(std::string tag, std::string option="");
+    void print(std::string tag, std::string content);
+    void close();
+    std::ofstream output;
+    std::vector<std::string> tags;
+    int measure_number;
+    int last_key;
+    int last_beats;
+    int last_beat_type;
+    bool last_clef;
 };
 
 

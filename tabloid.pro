@@ -25,4 +25,6 @@ SOURCES += src/tabloid.cpp \
            src/core/recorder.cpp \
            src/core/sheet_music.cpp \
            src/core/sheet_music_converter.cpp \
-           src/gui/tabloid_window.cpp
+           src/gui/tabloid_window.cpp \
+    src/core/converter.cpp \
+    src/core/guitar_tab_converter.cpp

@@ -148,7 +148,6 @@ void Parser::aubioProcess(int beats_per_measure, SheetMusic &sheet)
         aubio_tempo_do(aubio_tempo, input_buffer, tempo_output);
         if (fvec_get_sample(tempo_output, 0))
         {
-            std::cout << "Beat!\n";
             current_beat++;
             // Add the measure to the sheet music and use a new measure.
             if (current_beat > beats_per_measure)

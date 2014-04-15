@@ -34,16 +34,6 @@ public:
     bool convert(const std::string &name, const SheetMusic &sheet);
 
 private:
-    int measure_number;
-    int last_key;
-    int last_beats;
-    int last_beat_type;
-    bool last_clef;
-    std::ofstream output;
-    std::vector<std::string> tags;
-    void open(std::string tag, std::string option="");
-    void print(std::string tag, std::string content);
-    void close();
     void addNote(int pitch, float start, float duration, float beat_duration, int divisions=1);
     void addMeasure(int divisions=1, int key=0, int beats=4, int beat_type=4, bool treble=true);
 };

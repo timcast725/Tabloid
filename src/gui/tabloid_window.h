@@ -1,4 +1,4 @@
-// Copyright 2014 Gary Lu
+// Copyright 2014 Timothy Castiglia
 
 // This file is part of Tabloid.
 
@@ -20,6 +20,7 @@
 
 #include <QString>
 #include <QWidget>
+#include <QComboBox>
 
 class TabloidWindow : public QWidget
 {
@@ -27,13 +28,15 @@ class TabloidWindow : public QWidget
 
 public:
     // Tabloid Window currently just contains an open and transcribe button.
-    TabloidWindow(int w = 200, int h = 100, QWidget *parent = 0);
+    TabloidWindow(int w = 200, int h = 105, QWidget *parent = 0);
 
 public slots:
     // Action for clicking on the open button.
     void clickOpen();
-    // Action for clicking the transcribe button.
+    // Action for clicking the Sheet Music button.
     void clickTranscribe();
+    // Action for clicking the Guitar Tab button
+    void clickTranscribeGuitar();
 private:
     int width;
     int height;

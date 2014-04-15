@@ -19,6 +19,7 @@
 #include "parser.h"
 #include "sheet_music.h"
 #include "sheet_music_converter.h"
+#include "guitar_tab_converter.h"
 #include "tabloid_window.h"
 
 #include <iostream>
@@ -37,12 +38,34 @@ TabloidWindow::TabloidWindow(int w, int h, QWidget *parent) : QWidget(parent)
     setWindowTitle("Tabloid");
 
     QPushButton *open_button = new QPushButton("Open", this);
-    open_button->setGeometry((width - 50) / 2, height - 80, 50, 25);
+    open_button->setGeometry((width - 50) / 2, 10, 50, 25);
     connect(open_button, SIGNAL(clicked()), this, SLOT(clickOpen()));
 
-    QPushButton *transcribe_button = new QPushButton("Transcribe", this);
-    transcribe_button->setGeometry((width - 100) / 2, height - 40, 100, 25);
+    QPushButton *transcribe_button = new QPushButton("Sheet Music", this);
+    transcribe_button->setGeometry((width - 100) / 2, 40, 100, 25);
     connect(transcribe_button, SIGNAL(clicked()), this, SLOT(clickTranscribe()));
+
+    QPushButton *guitar_button = new QPushButton("Guitar Tab", this);
+    guitar_button->setGeometry((width - 125) / 2, 70, 80, 25);
+    connect(guitar_button, SIGNAL(clicked()), this, SLOT(clickTranscribeGuitar()));
+
+    QComboBox *guitar_tuning = new QComboBox(this);
+    guitar_tuning->setGeometry((width + 40) / 2, 70, 40, 25);
+    connect(guitar_button, SIGNAL(clicked()), this, SLOT(clickTranscribeGuitar()));
+    QString tuning1("E");
+    QString tuning2("Eb");
+    QString tuning3("D");
+    QString tuning4("C#");
+    QString tuning5("C");
+    QString tuning6("B");
+    QString tuning7("Bb");
+    guitar_tuning->insertItem(1,tuning1);
+    guitar_tuning->insertItem(2,tuning2);
+    guitar_tuning->insertItem(3,tuning3);
+    guitar_tuning->insertItem(4,tuning4);
+    guitar_tuning->insertItem(5,tuning5);
+    guitar_tuning->insertItem(6,tuning6);
+    guitar_tuning->insertItem(7,tuning7);
 }
 
 void TabloidWindow::clickOpen()
@@ -66,6 +89,26 @@ void TabloidWindow::clickTranscribe()
         return;
     }
     Converter *convert = new SheetMusicConverter();
+    file_name.chop(4);
+    file_name.append(".xml");
+    convert->convert(file_name.toStdString(), music);
+}
+
+void TabloidWindow::clickTranscribeGuitar()
+{
+    if (file_name.isEmpty())
+    {
+        std::cerr << "Empty file name" << std::endl;
+        return;
+    }
+    SheetMusic music;
+    Parser parse;
+    if (!parse.parse((char_t *) file_name.toUtf8().constData(), 4, music))
+    {
+        std::cerr << "Failed to parse" << std::endl;
+        return;
+    }
+    Converter *convert = new GuitarTabConverter();
     file_name.chop(4);
     file_name.append(".xml");
     convert->convert(file_name.toStdString(), music);
